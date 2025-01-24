@@ -25,7 +25,7 @@ interface Amount {
 }
 
 export default function CheckoutPage() {
-  const [amount, setAmount] = useState<Amount>({
+  const [amount, ] = useState<Amount>({
     currency: "KRW",
     value: 50000,
   });
@@ -92,10 +92,10 @@ export default function CheckoutPage() {
     // eslint-disable-next-line
   }, [widgets]);
 
-  const updateAmount = async (amount: Amount) => {
-    setAmount(amount);
-    await widgets!.setAmount(amount);
-  };
+  // const updateAmount = async (amount: Amount) => {
+  //   setAmount(amount);
+  //   await widgets!.setAmount(amount);
+  // };
 
   return (
     <div>
