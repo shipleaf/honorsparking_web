@@ -17,7 +17,7 @@ export default function HistoryComponents() {
         </div>
         <div className="flex flex-row gap-2">
           <div className="rounded-full bg-[#F6F6F6] w-[45px] h-[45px] flex items-center justify-center">
-            <Image src="/src/icon/Onticket.svg" alt="" width={24} height={24} />
+            <Image src="/src/icon/OnTicket.svg" alt="" width={24} height={24} />
           </div>
           <div className="flex flex-col ">
             <span className="text-[#7E7F83] text-md">이용권 사용</span>
