@@ -4,29 +4,87 @@ import { useState } from "react";
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import {
+  useGoogleLogin,
+  useKakaoLogin,
+  useNaverLogin,
+} from "@/app/api/useSocialLoginAPI";
+
+type SocialProvider = "kakao" | "naver" | "google";
 
 export default function LoginFormContainer() {
   const router = useRouter();
-  const userInfo = {
-    userId: "sunyeop12",
-    password: "123",
-  };
 
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (id === userInfo.userId && password === userInfo.password) {
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/login",
+        {
+          username: id,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+        }
+      );
+
+      console.log(response.headers);
+
+      console.log("로그인 성공:", response.data);
       router.push("/");
-    } else {
-      alert("로그인 정보가 일치하지 않습니다.");
+    } catch (error) {
+      console.error("로그인 실패:", error);
+      alert("로그인에 실패했습니다.");
     }
+  };
+
+  const socialLoginAPIs = {
+    kakao: useKakaoLogin,
+    naver: useNaverLogin,
+    google: useGoogleLogin,
+  };
+
+  const handleSocialLogin = async (provider: SocialProvider) => {
+    try {
+      const response = await socialLoginAPIs[provider]();
+
+      console.log(`${provider} 로그인 성공:`, response);
+
+      // 로그인 성공 후 페이지 이동
+      router.push("/");
+    } catch (error) {
+      console.error(`${provider} 로그인 실패:`, error);
+      alert(`${provider} 로그인에 실패했습니다.`);
+    }
+  };
+
+  const handleKakaoLogin = () => {
+    router.push("http://localhost:8080/api/v1/auth/login/oauth/kakao");
+  };
+
+  const handleNaverLogin = () => {
+    router.push("http://localhost:8080/api/v1/auth/login/oauth/naver");
+  };
+
+  const handleGoogleLogin = () => {
+    router.push("http://localhost:8080/api/v1/auth/login/oauth/google");
   };
 
   return (
     <div className="bg-white rounded-t-[32px] w-full px-4 pt-8">
       <div className="flex flex-col items-center w-full gap-6">
         <div className="flex flex-col w-[95%] gap-1">
+          <div className="flex items-center justify-center gap-[30%] mb-6">
+            <div className="font-[700] text-md">로그인</div>
+            <div className="font-[700] text-md text-[#7E7F83]">비회원</div>
+          </div>
           <span className="text-[#7E7F83]">이메일</span>
           <input
             className="rounded-[12px] border border-1 p-4 focus:placeholder-transparent focus:outline-none focus:border-[#093AEE]"
@@ -52,7 +110,10 @@ export default function LoginFormContainer() {
           >
             로그인
           </button>
-          <button className="border border-1 border-[#093AEE] font-[500] text-[#093AEE] p-5 w-full text-[17px] rounded-[3rem]">
+          <button
+            className="border border-1 border-[#093AEE] font-[500] text-[#093AEE] p-5 w-full text-[17px] rounded-[3rem]"
+            onClick={(e) => router.push("/signup")}
+          >
             회원가입
           </button>
         </div>
@@ -62,7 +123,7 @@ export default function LoginFormContainer() {
           SNS로 간편하게 시작하기
         </span>
         <div className="flex flex-row gap-8">
-          <button>
+          <button onClick={handleKakaoLogin}>
             <Image
               src="/src/image/KakaoLogin.png"
               alt=""
@@ -70,7 +131,7 @@ export default function LoginFormContainer() {
               height={50}
             />
           </button>
-          <button>
+          <button onClick={handleNaverLogin}>
             <Image
               src="/src/image/NaverLogin.png"
               alt=""
@@ -78,7 +139,7 @@ export default function LoginFormContainer() {
               height={50}
             />
           </button>
-          <button>
+          <button onClick={handleGoogleLogin}>
             <Image
               src="/src/image/GoogleLogin.png"
               alt=""

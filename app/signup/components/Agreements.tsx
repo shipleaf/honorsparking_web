@@ -1,7 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
+import { useSignupStore } from "@/store/useSignUpStore";
 
 export default function Agreements() {
+  const { setSignupData } = useSignupStore();
+
   return (
     <div className="px-6 space-y-6">
       <div className="bg-[#fff] rounded-[16px] p-4 space-y-6">
@@ -52,6 +57,9 @@ export default function Agreements() {
           type="email"
           className="w-full bg-[#F0F0F0] p-4 rounded-[12px] focus:outline-none placeholder:font-[500]"
           placeholder="입력한 이메일로 알림을 받을 수 있어요"
+          onBlur={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setSignupData({ email: e.target.value });
+          }}
         />
       </div>
     </div>
