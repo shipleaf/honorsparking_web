@@ -1,16 +1,40 @@
+"use client";
+
 import React from "react";
 import PhoneAuth from "./components/PhoneAuth";
 import ProgressBar from "./components/ProgressBar";
 import BottomButton from "./components/BottomButton";
 import Agreements from "./components/Agreements";
+import { useSignupStageStore } from "@/store/useSignupStore";
+import UserInfoInput from "./components/UserInfoInput";
+import UserRegister from "./components/UserRegister";
 
-export default function page() {
+export default function Page() {
+  const stage = useSignupStageStore((state) => state.stage);
+
   return (
-    <div className="bg-[#F0F0F0] h-[100vh] w-full space-y-6">
+    <div className="bg-[#F0F0F0] w-full h-[100vh] space-y-6">
       <ProgressBar />
-      <PhoneAuth />
-      <Agreements />
-      <BottomButton />
+      {stage === 0 ? (
+        <div className="phone w-full space-y-6">
+          <PhoneAuth />
+          <Agreements />
+          <BottomButton />
+        </div>
+      ) : stage === 1 ? (
+        <div className="user-info">
+          <UserInfoInput />
+          <BottomButton />
+        </div>
+      ) : stage === 2 ? (
+        <div className="additional-info">
+          <UserRegister />
+        </div>
+      ) : stage === 3 ? (
+        <div className="signup-complete">
+          <BottomButton />
+        </div>
+      ) : null}
     </div>
   );
 }

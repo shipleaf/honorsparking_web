@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import Script from "next/script";
+import TanStackProvider from "./providers/TanStackProvider";
 
 const pretendard = localFont({
   src: "../public/src/fonts/PretendardVariable.woff2",
@@ -24,7 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body className={`${pretendard.variable} font-pretendard m-auto`}>
-        {children}
+        <TanStackProvider>{children}</TanStackProvider>
         <Script
           type="text/javascript"
           src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}`}
