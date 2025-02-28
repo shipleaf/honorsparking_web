@@ -1,4 +1,3 @@
-import { SignupState } from "@/store/useSignupStore";
 import axios from "axios";
 
 // 카카오 로그인 반환값 타입
@@ -10,7 +9,19 @@ interface KakaoLoginResponse {
   birthday: string;
 }
 
-export const SignUp = async (signupData: SignupState): Promise<void> => {
+export interface SignupStateAPI {
+  platform: string;
+  name: string;
+  mobile: string;
+  birthyear: string;
+  birthday: string;
+  carNumber: string;
+  accountId: string;
+  accountPassword: string;
+  email: string;
+}
+
+export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   try {
     await axios.post("http://localhost:8080/api/v1/auth/join", signupData, {
       headers: { "Content-Type": "application/json" },

@@ -11,8 +11,8 @@ export default function UserRegister() {
   const [accountId, setAccountId] = useState("");
   const [accountPassword, setAccountPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { stage, nextStage, prevStage } = useSignupStageStore();
-  const { setSignupData, ...signupData } = useSignupStore();
+  const { stage, prevStage } = useSignupStageStore();
+  const { setSignupData } = useSignupStore();
   const router = useRouter();
 
   const reset = useSignupStageStore((state) => state.reset);
@@ -27,6 +27,7 @@ export default function UserRegister() {
     setSignupData({ accountId, accountPassword });
 
     // ✅ `setSignupData`를 제외한 `signupData` 가져오기
+    // eslint-disable-next-line
     const { setSignupData: _, ...filteredSignupData } =
       useSignupStore.getState();
 

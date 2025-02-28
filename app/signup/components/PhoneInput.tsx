@@ -4,7 +4,7 @@ import { useSignupStageStore, useSignupStore } from "@/store/useSignupStore";
 import React, { useEffect, useState } from "react";
 
 export default function PhoneInput() {
-  const [hasValue, setHasValue] = useState(false);
+  const [, setHasValue] = useState(false);
   const [isValidPhone, setIsValidPhone] = useState(false); // ✅ 유효한 전화번호 여부
   const [isWaitingForAuth, setIsWaitingForAuth] = useState(false); // ✅ 인증 대기 상태
   const [displayPhone, setDisplayPhone] = useState(""); // 화면에 표시할 전화번호
