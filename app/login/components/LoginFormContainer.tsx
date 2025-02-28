@@ -5,13 +5,6 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import {
-  useGoogleLogin,
-  useKakaoLogin,
-  useNaverLogin,
-} from "@/app/api/useSocialLoginAPI";
-
-type SocialProvider = "kakao" | "naver" | "google";
 
 export default function LoginFormContainer() {
   const router = useRouter();
@@ -42,26 +35,6 @@ export default function LoginFormContainer() {
     } catch (error) {
       console.error("로그인 실패:", error);
       alert("로그인에 실패했습니다.");
-    }
-  };
-
-  const socialLoginAPIs = {
-    kakao: useKakaoLogin,
-    naver: useNaverLogin,
-    google: useGoogleLogin,
-  };
-
-  const handleSocialLogin = async (provider: SocialProvider) => {
-    try {
-      const response = await socialLoginAPIs[provider]();
-
-      console.log(`${provider} 로그인 성공:`, response);
-
-      // 로그인 성공 후 페이지 이동
-      router.push("/");
-    } catch (error) {
-      console.error(`${provider} 로그인 실패:`, error);
-      alert(`${provider} 로그인에 실패했습니다.`);
     }
   };
 
@@ -112,7 +85,7 @@ export default function LoginFormContainer() {
           </button>
           <button
             className="border border-1 border-[#093AEE] font-[500] text-[#093AEE] p-5 w-full text-[17px] rounded-[3rem]"
-            onClick={(e) => router.push("/signup")}
+            onClick={() => router.push("/signup")}
           >
             회원가입
           </button>

@@ -1,6 +1,6 @@
 import React from "react";
 import CarNumberInput from "../ticket/payment/car-change/components/CarNumberInput";
-import ChangeButton from "../ticket/payment/car-change/components/ChangeButton";
+// import ChangeButton from "../ticket/payment/car-change/components/ChangeButton";
 import Image from "next/image";
 
 export default function page() {
