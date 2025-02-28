@@ -1,23 +1,47 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SideBar from "../common/SideBar";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function MainHeader() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
   const newNotification = 1;
 
-  const toggleSideBar = () => {
-    setIsSideBarOpen(true);
-  };
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/session/info",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+          }
+        );
 
-  const closeSideBar = () => {
-    setIsSideBarOpen(false);
-  };
+        if (res.status === 401) {
+          router.push("/login"); // 401이면 로그인 페이지로 이동
+        } else if (res.status == 200) {
+          setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
+        }
+      } catch (error) {
+        console.error("Session check failed", error);
+      }
+    };
 
-  return (
+    checkSession();
+  }, [router]);
+
+  const toggleSideBar = () => setIsSideBarOpen(true);
+  const closeSideBar = () => setIsSideBarOpen(false);
+
+  return isAuthenticated ? (
     <div className="relative w-full">
       <div className="grid grid-cols-5 items-center p-6 w-full">
         <button className="justify-self-start pl-2" onClick={toggleSideBar}>
@@ -58,5 +82,5 @@ export default function MainHeader() {
         </div>
       </div>
     </div>
-  );
+  ) : null; // 인증 안 된 상태면 아무것도 렌더링 안 함
 }

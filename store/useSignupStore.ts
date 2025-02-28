@@ -17,6 +17,7 @@ interface SignupStageState {
   stage: number;
   nextStage: () => void;
   prevStage: () => void;
+  reset: () => void;
 }
 
 export const useSignupStore = create<SignupState>((set) => ({
@@ -47,6 +48,11 @@ export const useSignupStageStore = create<SignupStageState>((set) => ({
     set((state) => {
       const newStage = Math.max(0, state.stage - 1);
       console.log("⬅️ Previous Stage:", newStage); // ✅ 이전 단계로 변경될 때 로그 출력
+      return { stage: newStage };
+    }),
+  reset: () =>
+    set(() => {
+      const newStage = 0;
       return { stage: newStage };
     }),
 }));

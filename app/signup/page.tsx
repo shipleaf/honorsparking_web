@@ -16,22 +16,21 @@ export default function Page() {
     <div className="bg-[#F0F0F0] w-full h-[100vh] space-y-6">
       <ProgressBar />
       {stage === 0 ? (
-        <div className="phone w-full space-y-6">
-          <PhoneAuth />
+        <div className="phone">
           <Agreements />
-          <BottomButton />
         </div>
       ) : stage === 1 ? (
         <div className="user-info">
-          <UserInfoInput />
-          <BottomButton />
+          <PhoneAuth />
         </div>
       ) : stage === 2 ? (
         <div className="additional-info">
-          <UserRegister />
+          <UserInfoInput />
+          <BottomButton />
         </div>
       ) : stage === 3 ? (
         <div className="signup-complete">
+          <UserRegister />
           <BottomButton />
         </div>
       ) : null}
