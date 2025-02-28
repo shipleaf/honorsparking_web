@@ -12,15 +12,13 @@ interface KakaoLoginResponse {
 
 export const SignUp = async (signupData: SignupState): Promise<void> => {
   try {
-    const response = await axios.post("http://localhost:8080/api/v1/auth/join", signupData, {
+    await axios.post("http://localhost:8080/api/v1/auth/join", signupData, {
       headers: { "Content-Type": "application/json" },
     });
-
-    console.log("✅ 회원가입 성공:", response.data);
-    alert("회원가입이 완료되었습니다!");
   } catch (error) {
     console.error("❌ 회원가입 실패:", error);
     alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+    throw error;
   }
 };
 

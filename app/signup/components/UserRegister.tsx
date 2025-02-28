@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useSignupStageStore } from "@/store/useSignupStore";
 import { useSignupStore } from "@/store/useSignupStore";
 import { SignUp } from "@/app/api/useSocialLoginAPI";
+import { useRouter } from "next/navigation";
 
 export default function UserRegister() {
   const [accountId, setAccountId] = useState("");
@@ -12,6 +13,9 @@ export default function UserRegister() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const { stage, nextStage, prevStage } = useSignupStageStore();
   const { setSignupData, ...signupData } = useSignupStore();
+  const router = useRouter();
+
+  const reset = useSignupStageStore((state) => state.reset);
 
   const handleSignup = async () => {
     if (accountPassword !== confirmPassword) {
@@ -26,16 +30,13 @@ export default function UserRegister() {
     const { setSignupData: _, ...filteredSignupData } =
       useSignupStore.getState();
 
-    console.log("📢 회원가입 요청 데이터:", filteredSignupData);
-
     try {
       // ✅ API 호출
       await SignUp(filteredSignupData);
-      alert("회원가입이 완료되었습니다!");
-      nextStage();
-    } catch (error) {
-      console.error("❌ 회원가입 실패:", error);
-      alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+      router.push("/login");
+      reset();
+    } catch {
+      return;
     }
   };
 
@@ -49,7 +50,7 @@ export default function UserRegister() {
           <div className="flex justify-between">
             <div className="flex items-center gap-2">
               <Image
-                src="/icon/Information.svg"
+                src="/src/icon/Information.svg"
                 alt=""
                 width={24}
                 height={24}
@@ -70,7 +71,12 @@ export default function UserRegister() {
         </div>
         <div className="bg-white p-4 rounded-[16px] space-y-2">
           <div className="flex items-center gap-2">
-            <Image src="/icon/Information.svg" alt="" width={24} height={24} />
+            <Image
+              src="/src/icon/Information.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
             <span className="text-md font-[700]">비밀번호</span>
           </div>
           <input
@@ -83,7 +89,12 @@ export default function UserRegister() {
         </div>
         <div className="bg-white p-4 rounded-[16px] space-y-2">
           <div className="flex items-center gap-2">
-            <Image src="/icon/Information.svg" alt="" width={24} height={24} />
+            <Image
+              src="/src/icon/Information.svg"
+              alt=""
+              width={24}
+              height={24}
+            />
             <span className="text-md font-[700]">비밀번호 확인</span>
           </div>
           <input
@@ -95,9 +106,8 @@ export default function UserRegister() {
           />
         </div>
       </div>
-
       <div className="fixed bottom-4 w-full px-6 z-100">
-        {stage === 2 && (
+        {stage === 3 && (
           <div className="w-full flex justify-between">
             <button
               className="bg-[#D2D2D2] text-[17px] text-[#2a2a2a] font-[500] py-4 w-[33%] rounded-[999px]"
