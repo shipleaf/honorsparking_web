@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 export default function LoginFormContainer() {
+  const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
   const router = useRouter();
 
   const [id, setId] = useState("");
@@ -15,7 +16,7 @@ export default function LoginFormContainer() {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/v1/auth/login",
+        `${apiUrl}/api/v1/auth/login`,
         {
           username: id,
           password: password,
@@ -51,7 +52,7 @@ export default function LoginFormContainer() {
   };
 
   return (
-    <div className="bg-white rounded-t-[32px] w-full px-4 pt-8">
+    <div className="bg-white rounded-t-[32px] w-full px-4 py-8 pb-10">
       <div className="flex flex-col items-center w-full gap-6">
         <div className="flex flex-col w-[95%] gap-1">
           <div className="flex items-center justify-center gap-[30%] mb-6">
