@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 export default function MainHeader() {
+  const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
@@ -15,15 +16,12 @@ export default function MainHeader() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:8080/api/v1/session/info",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
-          }
-        );
+        const res = await axios.get(`${apiUrl}/api/v1/session/info`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+        });
         if (res.status == 200) {
           setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
         }
