@@ -4,12 +4,14 @@ import Image from "next/image";
 import React, { useState } from "react";
 import DateCalendar from "./DateCalendar";
 import { useSignupStore } from "@/store/useSignupStore";
+import { MdCancel } from "react-icons/md";
 
 export default function UserInfoInput() {
   const [isBottomSheet, setIsBottomSheet] = useState(false);
   const [accountName, setAccountName] = useState("");
   const [carNumber, setCarNumber] = useState("");
   const { setSignupData } = useSignupStore();
+  const [birthDate, setBirthDate] = useState("");
 
   // 입력값이 변경될 때 상태 및 store 업데이트
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +31,12 @@ export default function UserInfoInput() {
       </span>
       <div className="bg-white p-4 rounded-[16px] space-y-2">
         <div className="flex items-center gap-2">
-          <Image src="/src/icon/Information.svg" alt="" width={24} height={24} />
+          <Image
+            src="/src/icon/Information.svg"
+            alt=""
+            width={24}
+            height={24}
+          />
           <span className="text-md font-[700]">이름</span>
         </div>
         <input
@@ -50,8 +57,11 @@ export default function UserInfoInput() {
           onClick={() => setIsBottomSheet(true)}
         >
           <input
+            readOnly
+            type="date"
             placeholder="생년월일을 입력해주세요"
             className="w-full bg-inherit focus:outline-none"
+            value={birthDate}
             onMouseDown={(e) => e.preventDefault()}
           />
           <Image src="/src/icon/Arrow.svg" alt="" width={24} height={24} />
@@ -83,14 +93,19 @@ export default function UserInfoInput() {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-end w-full p-4 z-1000">
-            <button
+            <MdCancel
               className="font-[700] text-xl"
               onClick={() => setIsBottomSheet(false)}
-            >
-              X
-            </button>
+              size={24}
+              color="#cccccc"
+            />
           </div>
-          <DateCalendar />
+          <DateCalendar
+            birthDate={birthDate}
+            setBirthDate={setBirthDate}
+            isBottomSheet={isBottomSheet}
+            setIsBottomSheet={setIsBottomSheet}
+          />
         </div>
       </div>
     </div>

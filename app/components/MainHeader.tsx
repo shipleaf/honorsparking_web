@@ -24,19 +24,16 @@ export default function MainHeader() {
             withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
           }
         );
-
-        if (res.status === 401) {
-          router.push("/login"); // 401이면 로그인 페이지로 이동
-        } else if (res.status == 200) {
+        if (res.status == 200) {
           setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
         }
-      } catch (error) {
-        console.error("Session check failed", error);
+      } catch {
+        router.push("login");
       }
     };
-
     checkSession();
-  }, [router]);
+    // eslint-disable-next-line
+  }, []);
 
   const toggleSideBar = () => setIsSideBarOpen(true);
   const closeSideBar = () => setIsSideBarOpen(false);
