@@ -26,7 +26,7 @@ export default function MainHeader() {
           setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
         }
       } catch {
-        router.push("login");
+        router.push('/login');
       }
     };
     checkSession();
