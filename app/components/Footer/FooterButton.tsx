@@ -3,7 +3,7 @@
 import React from "react";
 
 export default function FooterButton() {
-  const pdfUrl = "/docs/모여봐요개인정보처리방침_v2.pdf";
+  const pdfUrl = "/docs/아너스코리아 개인정보처리방침.pdf";
   return (
     <div className="flex flex-row gap-2 p-8 text-[#FFFFFF] font-[300]">
       {/* <button className=''>이용약관</button>

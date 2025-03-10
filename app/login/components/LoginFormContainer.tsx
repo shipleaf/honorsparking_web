@@ -40,15 +40,15 @@ export default function LoginFormContainer() {
   };
 
   const handleKakaoLogin = () => {
-    router.push("http://localhost:8080/api/v1/auth/login/oauth/kakao");
+    router.push(`${apiUrl}/api/v1/auth/login/oauth/kakao`);
   };
 
   const handleNaverLogin = () => {
-    router.push("http://localhost:8080/api/v1/auth/login/oauth/naver");
+    router.push(`${apiUrl}/api/v1/auth/login/oauth/naver`);
   };
 
   const handleGoogleLogin = () => {
-    router.push("http://localhost:8080/api/v1/auth/login/oauth/google");
+    router.push(`${apiUrl}/api/v1/auth/login/oauth/google`);
   };
 
   return (
