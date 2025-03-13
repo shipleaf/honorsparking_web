@@ -1,42 +1,92 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import SideBar from "../common/SideBar";
 import { useRouter } from "next/navigation";
+
+const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
+
+const fetchSessionInfo = async () => {
+  const res = await axios.get(`${apiUrl}/api/v1/session/info`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  });
+  return res.data;
+};
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { ClipLoader } from "react-spinners";
 
 export default function MainHeader() {
-  const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
   const newNotification = 1;
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await axios.get(`${apiUrl}/api/v1/session/info`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
-        });
-        if (res.status == 200) {
-          setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
-        }
-      } catch {
-        router.push('/login');
-      }
-    };
-    checkSession();
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     try {
+  //       const res = await axios.get(`${apiUrl}/api/v1/session/info`, {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+  //       });
+  //       if (res.status == 200) {
+  //         setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
+  //       }
+  //     } catch {
+  //       router.push("/login");
+  //     }
+  //   };
+  //   checkSession();
+  //   // eslint-disable-next-line
+  // }, []);
+
+  const { isLoading, isError } = useQuery({
+    queryKey: ["sessionInfo"],
+    queryFn: fetchSessionInfo,
+    retry: false, // 실패 시 재시도를 원하지 않으면 false 설정
+  });
+
+  if (isLoading)
+    return (
+      <div className="absolute z-[101] top-0 w-full h-[100vh] flex items-center justify-center bg-[#fff]">
+        <ClipLoader size={48} color="#2221d0" />
+      </div>
+    );
+
+  if (isError) {
+    router.push("/login");
+    return null; // 로그인 페이지로 이동하면서 렌더링 방지
+  }
+
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     try {
+  //       const res = await axios.get(`${apiUrl}/api/v1/alarmAll`, {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+  //       });
+  //       if (res.status == 200) {
+  //         setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
+  //       }
+  //     } catch {}
+  //   };
+  //   checkSession();
+  //   // eslint-disable-next-line
+  // }, []);
+
+  // 현재 알림 개수를 로컬스토리지를 통해 캐싱, 비교 후 새로운 알림이 있는지 확인
 
   const toggleSideBar = () => setIsSideBarOpen(true);
   const closeSideBar = () => setIsSideBarOpen(false);
 
-  return isAuthenticated ? (
+  return (
     <div className="relative w-full">
       <div className="grid grid-cols-5 items-center p-6 w-full">
         <button className="justify-self-start pl-2" onClick={toggleSideBar}>
@@ -77,5 +127,5 @@ export default function MainHeader() {
         </div>
       </div>
     </div>
-  ) : null; // 인증 안 된 상태면 아무것도 렌더링 안 함
+  ); // 인증 안 된 상태면 아무것도 렌더링 안 함
 }
