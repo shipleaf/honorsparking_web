@@ -3,13 +3,13 @@ import axios from "axios";
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
 // 카카오 로그인 반환값 타입
-interface KakaoLoginResponse {
-  nickname: string;
-  phone_number: string;
-  email: string;
-  birthyear: string;
-  birthday: string;
-}
+// interface KakaoLoginResponse {
+//   nickname: string;
+//   phone_number: string;
+//   email: string;
+//   birthyear: string;
+//   birthday: string;
+// }
 
 export interface SignupStateAPI {
   platform: string;
@@ -23,6 +23,11 @@ export interface SignupStateAPI {
   email: string;
 }
 
+export interface loginState {
+  username: string;
+  password: string;
+}
+
 export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   try {
     await axios.post(`${apiUrl}/api/v1/auth/join`, signupData, {
@@ -31,20 +36,6 @@ export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   } catch (error) {
     console.error("❌ 회원가입 실패:", error);
     alert("회원가입에 실패했습니다. 다시 시도해주세요.");
-    throw error;
-  }
-};
-
-// 로그인 API
-export const useLogin = async (): Promise<KakaoLoginResponse> => {
-  try {
-    const response = await axios.post(`${apiUrl}/api/v1/auth/login`, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-    console.log("로그인 성공:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("로그인 실패:", error);
     throw error;
   }
 };
