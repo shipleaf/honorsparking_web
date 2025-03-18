@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SideBar from "../common/SideBar";
 import { useRouter } from "next/navigation";
@@ -25,42 +25,26 @@ export default function MainHeader() {
   const router = useRouter();
   const newNotification = 1;
 
-  // useEffect(() => {
-  //   const checkSession = async () => {
-  //     try {
-  //       const res = await axios.get(`${apiUrl}/api/v1/session/info`, {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
-  //       });
-  //       if (res.status == 200) {
-  //         setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
-  //       }
-  //     } catch {
-  //       router.push("/login");
-  //     }
-  //   };
-  //   checkSession();
-  //   // eslint-disable-next-line
-  // }, []);
-
   const { isLoading, isError } = useQuery({
     queryKey: ["sessionInfo"],
     queryFn: fetchSessionInfo,
     retry: false, // 실패 시 재시도를 원하지 않으면 false 설정
   });
 
-  if (isLoading)
+  // ✅ 로딩이 끝난 후 에러 발생 시 로그인 페이지로 이동
+  useEffect(() => {
+    if (!isLoading && isError) {
+      router.push("/login");
+    }
+  }, [isLoading, isError, router]);
+
+  // 🔹 isLoading 상태일 때 ClipLoader를 표시 (화면 중앙)
+  if (isLoading) {
     return (
-      <div className="absolute z-[101] top-0 w-full h-[100vh] flex items-center justify-center bg-[#fff]">
+      <div className="fixed inset-0 z-[101] flex items-center justify-center bg-[#fff]">
         <ClipLoader size={48} color="#2221d0" />
       </div>
     );
-
-  if (isError) {
-    router.push("/login");
-    return null; // 로그인 페이지로 이동하면서 렌더링 방지
   }
 
   // useEffect(() => {
