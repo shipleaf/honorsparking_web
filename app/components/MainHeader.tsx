@@ -23,7 +23,7 @@ import { ClipLoader } from "react-spinners";
 export default function MainHeader() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const router = useRouter();
-  const newNotification = 1;
+  const unreadCount = 1;
 
   const { isLoading, isError } = useQuery({
     queryKey: ["sessionInfo"],
@@ -47,24 +47,6 @@ export default function MainHeader() {
     );
   }
 
-  // useEffect(() => {
-  //   const checkSession = async () => {
-  //     try {
-  //       const res = await axios.get(`${apiUrl}/api/v1/alarmAll`, {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
-  //       });
-  //       if (res.status == 200) {
-  //         setIsAuthenticated(true); // 성공하면 인증된 상태로 설정
-  //       }
-  //     } catch {}
-  //   };
-  //   checkSession();
-  //   // eslint-disable-next-line
-  // }, []);
-
   // 현재 알림 개수를 로컬스토리지를 통해 캐싱, 비교 후 새로운 알림이 있는지 확인
 
   const toggleSideBar = () => setIsSideBarOpen(true);
@@ -77,8 +59,11 @@ export default function MainHeader() {
           <Image src="/src/icon/SideBar.svg" alt="" width={24} height={24} />
         </button>
         <span className="font-[700] text-center col-span-3">HONORS KOREA</span>
-        <button className="justify-self-end">
-          {newNotification > 0 ? (
+        <button
+          className="justify-self-end"
+          onClick={() => router.push("/notice?page=1")}
+        >
+          {unreadCount > 0 ? (
             <Image
               src="/src/icon/NewNotification.svg"
               alt=""
