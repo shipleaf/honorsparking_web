@@ -1,14 +1,18 @@
-import React from "react";
+"use client";
+
+import React, { Suspense } from "react";
 import NoticeHeader from "./components/NoticeHeader";
 import NoticeContainer from "./components/NoticeContainer";
 
 export default function page() {
   return (
-    <div className="bg-[#fff] h-[100vh] w-[100vw]">
-      <NoticeHeader />
-      <div className="px-6 w-full">
-        <NoticeContainer />
+    <Suspense>
+      <div className="bg-[#fff] h-[100vh] w-[100vw]">
+        <NoticeHeader />
+        <div className="px-6 w-full">
+          <NoticeContainer />
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
