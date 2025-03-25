@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import NoticeComponent from "./NoticeComponent";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
@@ -145,147 +145,149 @@ export default function NoticeContainer() {
   };
 
   return (
-    <div className="space-y-4 pt-4 w-full">
-      <div className="relative grid grid-cols-4 rounded-[999px] w-full bg-white p-3 px-1">
-        <button
-          className={`text-md z-30 font-[500] ${
-            buttonSelected.buttonSelected === "Default"
-              ? "text-white"
-              : "text-[#2A2A2A]"
-          }`}
-          onClick={() => handleButtonSelect("Default")}
-        >
-          전체
-        </button>
-        <button
-          className={`text-md z-30 font-[500] ${
-            buttonSelected.buttonSelected === "InOut"
-              ? "text-white"
-              : "text-[#2A2A2A]"
-          }`}
-          onClick={() => handleButtonSelect("InOut")}
-        >
-          입/출차
-        </button>
-        <button
-          className={`text-md z-30 font-[500] ${
-            buttonSelected.buttonSelected === "RESERVE"
-              ? "text-white"
-              : "text-[#2A2A2A]"
-          }`}
-          onClick={() => handleButtonSelect("RESERVE")}
-        >
-          예약
-        </button>
-        <button
-          className={`text-md z-30 font-[500] ${
-            buttonSelected.buttonSelected === "Payment"
-              ? "text-white"
-              : "text-[#2A2A2A]"
-          }`}
-          onClick={() => handleButtonSelect("Payment")}
-        >
-          결제
-        </button>
-        <div
-          className={`absolute bg-[#2A2A2A] rounded-[999px] w-[25%] h-[90%] top-1/2 -translate-y-1/2 z-10 transform-all duration-300 ${backgroundClass}`}
-        ></div>
-      </div>
-      {!onCheck ? (
-        <div className="flex items-center justify-end px-2 gap-2">
+    <Suspense>
+      <div className="space-y-4 pt-4 w-full">
+        <div className="relative grid grid-cols-4 rounded-[999px] w-full bg-white p-3 px-1">
           <button
-            className="font-[600] px-4 rounded-[10px] py-1 text-[#2a2a2a]"
-            onClick={() => setOnCheck(true)}
+            className={`text-md z-30 font-[500] ${
+              buttonSelected.buttonSelected === "Default"
+                ? "text-white"
+                : "text-[#2A2A2A]"
+            }`}
+            onClick={() => handleButtonSelect("Default")}
           >
-            선택
+            전체
           </button>
-          <button className="font-[600] bg-[#f0f0f0] px-4 rounded-[10px] py-1 text-[#2a2a2a]">
-            읽기
+          <button
+            className={`text-md z-30 font-[500] ${
+              buttonSelected.buttonSelected === "InOut"
+                ? "text-white"
+                : "text-[#2A2A2A]"
+            }`}
+            onClick={() => handleButtonSelect("InOut")}
+          >
+            입/출차
           </button>
+          <button
+            className={`text-md z-30 font-[500] ${
+              buttonSelected.buttonSelected === "RESERVE"
+                ? "text-white"
+                : "text-[#2A2A2A]"
+            }`}
+            onClick={() => handleButtonSelect("RESERVE")}
+          >
+            예약
+          </button>
+          <button
+            className={`text-md z-30 font-[500] ${
+              buttonSelected.buttonSelected === "Payment"
+                ? "text-white"
+                : "text-[#2A2A2A]"
+            }`}
+            onClick={() => handleButtonSelect("Payment")}
+          >
+            결제
+          </button>
+          <div
+            className={`absolute bg-[#2A2A2A] rounded-[999px] w-[25%] h-[90%] top-1/2 -translate-y-1/2 z-10 transform-all duration-300 ${backgroundClass}`}
+          ></div>
         </div>
-      ) : (
-        <div className="flex items-center justify-between px-2 gap-2">
-          <div className="flex items-center gap-2 pl-2">
-            <input
-              type="checkbox"
-              id="selectAll"
-              checked={
-                selectedIds.length === message.alarms.length &&
-                message.alarms.length > 0
-              }
-              onChange={(e) => {
-                if (e.target.checked) {
-                  setSelectedIds(message.alarms.map((alarm) => alarm.id));
-                } else {
-                  setSelectedIds([]);
-                }
-              }}
-            />
-            <label
-              htmlFor="selectAll"
-              className="font-[500] text-[#2a2a2a] cursor-pointer"
-            >
-              전체 선택
-            </label>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* ✅ 조건부: 선택된 항목이 있을 때만 보이게 */}
-            {selectedIds.length > 0 && (
-              <>
-                <button
-                  className="font-[600] bg-[#2a2a2a] px-4 rounded-[10px] py-1 text-white"
-                  onClick={handleDeleteAlarms}
-                >
-                  삭제
-                </button>
-                <button
-                  className="font-[600] bg-[#f0f0f0] px-4 rounded-[10px] py-1 text-[#2a2a2a]"
-                  onClick={handleReadAlarms}
-                >
-                  읽기
-                </button>
-              </>
-            )}
-
-            {/* ✅ 항상 보이는 취소 버튼 */}
+        {!onCheck ? (
+          <div className="flex items-center justify-end px-2 gap-2">
             <button
-              className="font-[600] bg-[#fff] px-4 rounded-[10px] py-1 text-[#2a2a2a]"
-              onClick={handleCancel}
+              className="font-[600] px-4 rounded-[10px] py-1 text-[#2a2a2a]"
+              onClick={() => setOnCheck(true)}
             >
-              취소
+              선택
+            </button>
+            <button className="font-[600] bg-[#f0f0f0] px-4 rounded-[10px] py-1 text-[#2a2a2a]">
+              읽기
             </button>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center justify-between px-2 gap-2">
+            <div className="flex items-center gap-2 pl-2">
+              <input
+                type="checkbox"
+                id="selectAll"
+                checked={
+                  selectedIds.length === message.alarms.length &&
+                  message.alarms.length > 0
+                }
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedIds(message.alarms.map((alarm) => alarm.id));
+                  } else {
+                    setSelectedIds([]);
+                  }
+                }}
+              />
+              <label
+                htmlFor="selectAll"
+                className="font-[500] text-[#2a2a2a] cursor-pointer"
+              >
+                전체 선택
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* ✅ 조건부: 선택된 항목이 있을 때만 보이게 */}
+              {selectedIds.length > 0 && (
+                <>
+                  <button
+                    className="font-[600] bg-[#2a2a2a] px-4 rounded-[10px] py-1 text-white"
+                    onClick={handleDeleteAlarms}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    className="font-[600] bg-[#f0f0f0] px-4 rounded-[10px] py-1 text-[#2a2a2a]"
+                    onClick={handleReadAlarms}
+                  >
+                    읽기
+                  </button>
+                </>
+              )}
 
-      <div className="space-y-3 w-full">
-        {message.alarms.map((alarm) => (
-          <NoticeComponent
-            key={alarm.id}
-            title={
-              alarm.alarmType === "INOUT"
-                ? "입/출차 알림"
-                : alarm.alarmType === "RESERVE"
-                ? "예약 알림"
-                : "결제 알림"
-            }
-            message={alarm.content}
-            date={alarm.createdAt.split("T")[0]}
-            isRead={alarm.isRead}
-            onChecked={onCheck}
-            checked={selectedIds.includes(alarm.id)}
-            onChange={() => {
-              setSelectedIds(
-                (prev) =>
-                  prev.includes(alarm.id)
-                    ? prev.filter((id) => id !== alarm.id) // 체크 해제
-                    : [...prev, alarm.id] // 체크 추가
-              );
-            }}
-          />
-        ))}
+              {/* ✅ 항상 보이는 취소 버튼 */}
+              <button
+                className="font-[600] bg-[#fff] px-4 rounded-[10px] py-1 text-[#2a2a2a]"
+                onClick={handleCancel}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-3 w-full">
+          {message.alarms.map((alarm) => (
+            <NoticeComponent
+              key={alarm.id}
+              title={
+                alarm.alarmType === "INOUT"
+                  ? "입/출차 알림"
+                  : alarm.alarmType === "RESERVE"
+                  ? "예약 알림"
+                  : "결제 알림"
+              }
+              message={alarm.content}
+              date={alarm.createdAt.split("T")[0]}
+              isRead={alarm.isRead}
+              onChecked={onCheck}
+              checked={selectedIds.includes(alarm.id)}
+              onChange={() => {
+                setSelectedIds(
+                  (prev) =>
+                    prev.includes(alarm.id)
+                      ? prev.filter((id) => id !== alarm.id) // 체크 해제
+                      : [...prev, alarm.id] // 체크 추가
+                );
+              }}
+            />
+          ))}
+        </div>
+        <PageButton pagination={message.pagination} />
       </div>
-      <PageButton pagination={message.pagination} />
-    </div>
+    </Suspense>
   );
 }
