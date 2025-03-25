@@ -28,7 +28,12 @@ export default function ReservationComponents() {
         {/* 즐겨찾기 버튼 */}
         <button onClick={handleBookMark}>
           {isBookMark ? (
-            <Image src="/src/icon/OnBookMark.svg" alt="" width={30} height={30} />
+            <Image
+              src="/src/icon/OnBookMark.svg"
+              alt=""
+              width={30}
+              height={30}
+            />
           ) : (
             <Image src="/src/icon/BookMark.svg" alt="" width={30} height={30} />
           )}
