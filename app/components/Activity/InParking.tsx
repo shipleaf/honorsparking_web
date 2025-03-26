@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Accounting from "./Accounting/Accounting";
+import Accounting from "../Accounting/Accounting";
 
 export default function InParking() {
   return (
