@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchMyStatus } from "../api/UserActivity";
 import InParking from "./Activity/InParking";
 import OutParking from "./Activity/OutParking";
@@ -21,20 +22,14 @@ export interface ParkingStatusResponse {
 }
 
 export default function UserStatus() {
-  const [parkingStatus, setParkingStatus] =
-    useState<ParkingStatusResponse | null>(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res: ParkingStatusResponse = await fetchMyStatus();
-        setParkingStatus(res);
-      } catch (err) {
-        console.error("주차장 상태 불러오기 실패:", err);
-      }
-    };
+  const { data, isLoading, isError } = useQuery<ParkingStatusResponse>({
+    queryKey: ["myParkingStatus"],
+    queryFn: fetchMyStatus,
+    retry: false,
+  });
 
-    fetchData();
-  }, []);
+  if (isLoading) return <div>불러오는 중...</div>;
+  if (isError || !data) return <div>상태를 불러올 수 없습니다.</div>;
 
-  return <div>{parkingStatus?.isParked ? <InParking /> : <OutParking />}</div>;
+  return <div>{data.isParked ? <InParking /> : <OutParking />}</div>;
 }
