@@ -1,26 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReservationHeader from "./ReservationHeader";
 import ReservationComponents from "./ReservationComponent";
 import { ParkingZone } from "@/app/reservation/components/ReservationList";
 import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Reservation() {
-  const [parkingZones, setParkingZones] = useState<ParkingZone[]>([]);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["parkingZoneInfo"],
+    queryFn: fetchParkingZoneList,
+    retry: false,
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetchParkingZoneList();
-        setParkingZones(res.parkingZones);
-      } catch (err) {
-        console.error("주차장 목록 불러오기 실패:", err);
-      }
-    };
+  const parkingZones: ParkingZone[] = data?.parkingZones ?? [];
 
-    fetchData();
-  }, []);
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
 
   return (
     <div className="px-6 flex flex-col w-full gap-4">

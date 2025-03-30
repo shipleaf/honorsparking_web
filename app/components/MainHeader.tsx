@@ -16,6 +16,7 @@ const fetchSessionInfo = async () => {
   });
   return res.data;
 };
+
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { ClipLoader } from "react-spinners";
@@ -25,16 +26,19 @@ export default function MainHeader() {
   const router = useRouter();
   const unreadCount = 1;
 
+  const [isLoginModal, setIsLoginModal] = useState(false);
+
   const { isLoading, isError } = useQuery({
     queryKey: ["sessionInfo"],
     queryFn: fetchSessionInfo,
-    retry: false, // 실패 시 재시도를 원하지 않으면 false 설정
+    retry: false,
   });
 
   // ✅ 로딩이 끝난 후 에러 발생 시 로그인 페이지로 이동
   useEffect(() => {
     if (!isLoading && isError) {
-      router.push("/login");
+      setIsLoginModal(true);
+      // router.push("/login");
     }
   }, [isLoading, isError, router]);
 
@@ -95,6 +99,32 @@ export default function MainHeader() {
           <SideBar />
         </div>
       </div>
+      {isLoginModal && (
+        <div className="fixed inset-0 bg-white z-[1000]">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <div className="bg-white p-10 pb-4 rounded-[16px] w-[90%] max-w-md">
+              <h2 className="text-[17px] font-[700] mb-4 text-center">
+                로그인 후 이용 가능합니다.
+              </h2>
+              <div className="w-full mt-6">
+                <button
+                  className="rounded-[999px] bg-[#093AEE] p-4 px-12 w-full text-white font-[500]"
+                  onClick={() => {
+                    router.push("login");
+                  }}
+                >
+                  로그인
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  ); // 인증 안 된 상태면 아무것도 렌더링 안 함
+  );
 }
