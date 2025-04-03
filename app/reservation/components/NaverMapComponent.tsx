@@ -25,7 +25,7 @@ export default function NaverMapComponent({ data }: Props) {
   const sheetY = useMotionValue(0); // 시트의 위치 (Y축)
   const SHEET_MAX_Y = 500; // 시트가 닫힐 때의 위치
 
-  const bindSheetDrag = useDrag(({ down, movement: [, my], last }) => {
+  const bindSheetDrag = useDrag(({ down, movement: [, my] }) => {
     if (down) {
       sheetY.set(Math.max(0, Math.min(SHEET_MAX_Y, my)));
     } else {
