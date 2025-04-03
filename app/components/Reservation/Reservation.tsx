@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import ReservationHeader from "./ReservationHeader";
 import ReservationComponents from "./ReservationComponent";
 import { ParkingZone } from "@/app/reservation/components/ReservationList";
@@ -8,6 +8,24 @@ import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Reservation() {
+  useEffect(() => {
+    const handleLocation = (
+      event: CustomEvent<{ latitude: number; longitude: number }>
+    ) => {
+      const { latitude, longitude } = event.detail;
+      console.log("위치 도착!", latitude, longitude);
+      // 위치 기반 처리
+    };
+
+    // 타입 캐스팅 필수: addEventListener는 기본적으로 Event로 추론됨
+    const listener = (e: Event) => handleLocation(e as CustomEvent);
+
+    window.addEventListener("userLocation", listener);
+    return () => {
+      window.removeEventListener("userLocation", listener);
+    };
+  }, []);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["parkingZoneInfo"],
     queryFn: fetchParkingZoneList,

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ParkingZone } from "./ReservationList";
+import { motion, useMotionValue, animate } from "framer-motion";
+import { useDrag } from "@use-gesture/react";
 
 interface Props {
   data: ParkingZone;
@@ -19,6 +21,18 @@ type FeeRule = {
 export default function NaverMapComponent({ data }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFeeModalOpen, setIsFeeModalOpen] = useState(false);
+
+  const sheetY = useMotionValue(0); // 시트의 위치 (Y축)
+  const SHEET_MAX_Y = 500; // 시트가 닫힐 때의 위치
+
+  const bindSheetDrag = useDrag(({ down, movement: [, my], last }) => {
+    if (down) {
+      sheetY.set(Math.max(0, Math.min(SHEET_MAX_Y, my)));
+    } else {
+      const snap = my > SHEET_MAX_Y / 2 ? SHEET_MAX_Y : 0;
+      animate(sheetY, snap, { type: "spring", bounce: 0.2 });
+    }
+  });
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -51,19 +65,22 @@ export default function NaverMapComponent({ data }: Props) {
 
   const formatFeeRules = (rules: FeeRule[]): string[] => {
     if (!rules || rules.length === 0) return ["요금 정보 없음"];
-  
+
     const sorted = [...rules].sort((a, b) => a.startTime - b.startTime);
     const MAX_TIME = 2147483647;
-  
+
     return sorted.map((rule, index) => {
       const durationMinutes = (rule.endTime ?? MAX_TIME) - rule.startTime + 1;
-  
-      const formattedTime = durationMinutes >= 60
-        ? `${Math.floor(durationMinutes / 60)}시간${durationMinutes % 60 ? ` ${durationMinutes % 60}분` : ""}`
-        : `${durationMinutes}분`;
-  
+
+      const formattedTime =
+        durationMinutes >= 60
+          ? `${Math.floor(durationMinutes / 60)}시간${
+              durationMinutes % 60 ? ` ${durationMinutes % 60}분` : ""
+            }`
+          : `${durationMinutes}분`;
+
       const cost = rule.costPerTimeSlot.toLocaleString(); // 2000 → "2,000"
-  
+
       if (index === 0) {
         // 최초 요금
         return rule.costTimeSlot === durationMinutes
@@ -73,10 +90,13 @@ export default function NaverMapComponent({ data }: Props) {
         return `이후 ${rule.costTimeSlot}분당 ${cost}원`;
       } else {
         const rangeMinutes = rule.endTime - rule.startTime + 1;
-        const rangeStr = rangeMinutes >= 60
-          ? `${Math.floor(rangeMinutes / 60)}시간${rangeMinutes % 60 ? ` ${rangeMinutes % 60}분` : ""}`
-          : `${rangeMinutes}분`;
-  
+        const rangeStr =
+          rangeMinutes >= 60
+            ? `${Math.floor(rangeMinutes / 60)}시간${
+                rangeMinutes % 60 ? ` ${rangeMinutes % 60}분` : ""
+              }`
+            : `${rangeMinutes}분`;
+
         return `이후 ${rangeStr} ${rule.costTimeSlot}분당 ${cost}원`;
       }
     });
@@ -87,10 +107,19 @@ export default function NaverMapComponent({ data }: Props) {
   return (
     <div className="relative">
       <div id="map" style={{ width: "100%", height: "100vh" }}></div>
-      <div className="fixed bottom-0 w-full bg-white rounded-t-[1.25rem] p-4 flex flex-col justify-center gap-2">
-        <div className="w-full flex items-center justify-center p-2">
-          <Image src="/src/icon/Grabber.svg" alt="" width={36} height={24} />
+      <motion.div
+        className="fixed bottom-0 w-full bg-white rounded-t-[1.25rem] p-4 flex flex-col justify-center gap-2 z-50"
+        style={{ y: sheetY }}
+      >
+        {/* 그래버 핸들 */}
+        <div
+          {...bindSheetDrag()}
+          className="w-full flex justify-center cursor-grab py-2"
+        >
+          <div className="w-10 h-1.5 bg-gray-300 rounded-full" />
         </div>
+
+        {/* 상단 정보 (썸네일 + 이름 + 북마크) */}
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3 w-[90%]">
             <Image
@@ -127,6 +156,8 @@ export default function NaverMapComponent({ data }: Props) {
             )}
           </button>
         </div>
+
+        {/* 정보 카드 */}
         <div className="w-full grid grid-cols-2 gap-3">
           <div className="bg-[#F7F7F7] rounded-[16px] p-3 flex flex-col gap-5">
             <div className="flex flex-row items-center justify-start">
@@ -155,6 +186,8 @@ export default function NaverMapComponent({ data }: Props) {
             </span>
           </div>
         </div>
+
+        {/* 주차요금 */}
         <div className="flex flex-row gap-1 items-center justify-start pl-2 py-4">
           <span className="text-[#2A2A2A] font-[700] text-lg">주차요금</span>
           <Image
@@ -165,6 +198,8 @@ export default function NaverMapComponent({ data }: Props) {
             onClick={() => setIsFeeModalOpen(true)}
           />
         </div>
+
+        {/* 예약하기 버튼 */}
         <button
           className="rounded-[999px] bg-[#093AEE] p-3 text-white font-[400]"
           onClick={(e) => {
@@ -174,7 +209,7 @@ export default function NaverMapComponent({ data }: Props) {
         >
           예약하기
         </button>
-      </div>
+      </motion.div>
       {isModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
