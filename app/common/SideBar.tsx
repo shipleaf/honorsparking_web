@@ -6,14 +6,14 @@ import { useState } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 
 export default function SideBar() {
-  const [isTicketOpen, setIsTicketOpen] = useState(true);
+  // const [isTicketOpen, setIsTicketOpen] = useState(true);
   const [isParkingOpen, setIsParkingOpen] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(true);
 
-  const handleOpenTicket = () => {
-    setIsTicketOpen((prev) => !prev);
-  };
+  // const handleOpenTicket = () => {
+  //   setIsTicketOpen((prev) => !prev);
+  // };
 
   const handleOpenParking = () => {
     setIsParkingOpen((prev) => !prev);
@@ -31,7 +31,7 @@ export default function SideBar() {
     <div className="bg-white w-[80vw] max:w-[614px] h-[100vh] overflow-y-auto scrollbar-hide">
       <div className="px-6 py-12 pt-[70px] space-y-10">
         <span className="font-[700] text-lg">HONORS KOREA</span>
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <button
             className="flex flex-row w-full items-center justify-between z-10"
             onClick={handleOpenTicket}
@@ -61,7 +61,7 @@ export default function SideBar() {
             <button className="text-[#64656A] text-md">할인권 조회</button>
             <button className="text-[#64656A] text-md">정기권 구매</button>
           </div>
-        </div>
+        </div> */}
         <div>
           <button
             className="flex flex-row w-full items-center justify-between"

@@ -50,6 +50,9 @@ export default function History() {
       {/* {parkingHistory.map((history) => (
         <HistoryComponents key={history.id} data={history} />
       ))} */}
+      <div className="flex items-center justify-center">
+        <p className="text-center text-[#999] py-10">최근 사용 내역이 없습니다.</p>
+      </div>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default function FooterNav({ currentpage }: FooterNavProps) {
   };
 
   return (
-    <div className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[95vw] max-w-[730px] h-[10vh] bg-[#000000C7] flex flex-row justify-between rounded-[2rem] px-12 z-[100]">
+    <div className="fixed bottom-2 left-1/2 -translate-x-1/2 w-[95vw] max-w-[730px] h-[10vh] bg-[#000000C7] flex flex-row justify-between rounded-[2rem] px-[15%] z-[100]">
       <button
         className="flex flex-col justify-center items-center gap-2"
         onClick={() => handleNavigate({ page: "home" })}
@@ -65,7 +65,7 @@ export default function FooterNav({ currentpage }: FooterNavProps) {
           주차장
         </span>
       </button>
-      <button
+      {/* <button
         className="flex flex-col justify-center items-center gap-2"
         onClick={() => handleNavigate({ page: "ticket" })}
       >
@@ -86,7 +86,7 @@ export default function FooterNav({ currentpage }: FooterNavProps) {
         >
           이용권
         </span>
-      </button>
+      </button> */}
       <button
         className="flex flex-col justify-center items-center gap-2"
         onClick={() => handleNavigate({ page: "mypage" })}
