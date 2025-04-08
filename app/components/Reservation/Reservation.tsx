@@ -18,9 +18,13 @@ export default function Reservation() {
       window.ReactNativeWebView?.postMessage(
         JSON.stringify({ type: "GET_LOCATION" })
       );
-      console.log("📡 위치 요청 (focus)");
+      console.log("📡 위치 요청 (focus or mount)");
     };
 
+    // ✅ mount 시 바로 실행
+    handleFocus();
+
+    // ✅ 이후 focus 이벤트에도 실행
     window.addEventListener("focus", handleFocus);
     return () => {
       window.removeEventListener("focus", handleFocus);
