@@ -42,6 +42,8 @@ export default function ReservationList({
 }: Props) {
   const shouldShowSkeleton = isLoading || isFetching;
 
+  console.log("isFetching:", isFetching);
+
   useEffect(() => {
     if (!shouldShowSkeleton && parkingZones.length > 0) {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -57,6 +59,8 @@ export default function ReservationList({
       </div>
     );
   }
+
+  
 
   if (isError) {
     return (
