@@ -24,6 +24,7 @@ export default function Page() {
 
   const {
     data,
+    // eslint-disable-next-line
     isLoading: isQueryLoading,
     isError,
     isFetching,
@@ -128,7 +129,7 @@ export default function Page() {
 
         <ReservationList
           parkingZones={parkingZones}
-          isLoading={isQueryLoading || !location}
+          isLoading={isLoading}
           isFetching={isFetching}
           isError={isError}
         />
