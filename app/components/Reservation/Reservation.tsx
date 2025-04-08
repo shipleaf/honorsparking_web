@@ -13,10 +13,18 @@ export default function Reservation() {
     longitude: number;
   } | null>(null);
 
-  // 🔥 앱(WebView)에게 위치 요청 보내기
   useEffect(() => {
-    window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "GET_LOCATION" }));
-    console.log("📡 위치 요청 전송 (GET_LOCATION)");
+    const handleFocus = () => {
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "GET_LOCATION" })
+      );
+      console.log("📡 위치 요청 (focus)");
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
   }, []);
 
   // 📥 앱으로부터 위치 이벤트 받기
