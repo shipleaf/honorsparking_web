@@ -4,9 +4,15 @@ const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
 // 위, 경도값이 필수
 
-export const fetchParkingZoneList = async () => {
+export const fetchParkingZoneList = async ({
+  latitude,
+  longitude,
+}: {
+  latitude: number;
+  longitude: number;
+}) => {
   const response = await axios.get(
-    `${apiUrl}/api/v1/parkingzone/list?latitude=36.5123132&longitude=39.8483223`,
+    `${apiUrl}/api/v1/parkingzone/list?latitude=${latitude}&longitude=${longitude}`,
     {
       withCredentials: true,
     }
