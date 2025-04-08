@@ -43,11 +43,22 @@ export default function LoginFormContainer() {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+          withCredentials: true,
         }
       );
-
-      console.log(response.headers);
+  
+      const userId = response.data.userId; // ← 로그인 응답에서 유저 ID 가져오는 방식 (API 구조에 따라 맞춰줘야 해)
+  
+      // ✅ React Native 앱으로 메시지 전송
+      if (window.ReactNativeWebView && userId) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: "LOGIN_SUCCESS",
+            userId,
+          })
+        );
+      }
+  
       router.push("/");
     } catch (error) {
       console.error("로그인 실패:", error);

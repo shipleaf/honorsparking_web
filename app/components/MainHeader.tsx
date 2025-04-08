@@ -28,6 +28,11 @@ export default function MainHeader() {
 
   const [isLoginModal, setIsLoginModal] = useState(false);
 
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const { isLoading, isError } = useQuery({
     queryKey: ["sessionInfo"],
     queryFn: fetchSessionInfo,
@@ -43,7 +48,7 @@ export default function MainHeader() {
   }, [isLoading, isError, router]);
 
   // 🔹 isLoading 상태일 때 ClipLoader를 표시 (화면 중앙)
-  if (isLoading) {
+  if (!isClient || isLoading) {
     return (
       <div className="fixed inset-0 z-[101] flex items-center justify-center bg-[#fff]">
         <ClipLoader size={48} color="#2221d0" />
