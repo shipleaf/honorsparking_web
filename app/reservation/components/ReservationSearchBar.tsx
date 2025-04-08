@@ -3,11 +3,11 @@
 import React from "react";
 import Image from "next/image";
 import { useState } from "react";
-import ReservationList from "./ReservationList";
+// import ReservationList from "./ReservationList";
 
 export default function ReservationSearchBar() {
   const [isFocused, setIsFocused] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
+  // const [searchInput, setSearchInput] = useState("");
   return (
     <div>
       <div
@@ -22,10 +22,10 @@ export default function ReservationSearchBar() {
           type="text"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          onChange={(e) => setSearchInput(e.target.value)}
+          // onChange={(e) => setSearchInput(e.target.value)}
         />
       </div>
-      {isFocused ? (
+      {/* {isFocused ? (
         <div className="font-[700] text-lg mt-8 mb-6">검색 결과</div>
       ) : (
         <div className="font-[700] text-lg mt-8 mb-6">예약 가능한 주차장</div>
@@ -33,7 +33,7 @@ export default function ReservationSearchBar() {
       {isFocused && searchInput && (
         <ReservationList />
       )}
-      {!isFocused ? <ReservationList /> : ""}
+      {!isFocused ? <ReservationList /> : ""} */}
     </div>
   );
 }

@@ -1,37 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReservationHeader from "./ReservationHeader";
 import ReservationComponents from "./ReservationComponent";
 import { ParkingZone } from "@/app/reservation/components/ReservationList";
 import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import SkeletonCard from "./SkeletonCard";
+import { useLocationStore } from "@/store/locationStore";
 
 export default function Reservation() {
-  const [location, setLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const location = useLocationStore((state) => state.location);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    const handleFocus = () => {
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({ type: "GET_LOCATION" })
-      );
-      console.log("📡 위치 요청 (focus or mount)");
-    };
-
-    // ✅ mount 시 바로 실행
-    handleFocus();
-
-    // ✅ 이후 focus 이벤트에도 실행
-    window.addEventListener("focus", handleFocus);
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({ type: "GET_LOCATION" })
+    );
+    console.log("📡 위치 요청 (초기 마운트)");
   }, []);
 
-  // 📥 앱으로부터 위치 이벤트 받기
+  const setLocation = useLocationStore((state) => state.setLocation);
+
   useEffect(() => {
     const handleLocation = (
       event: CustomEvent<{ latitude: number; longitude: number }>
@@ -39,6 +30,8 @@ export default function Reservation() {
       const { latitude, longitude } = event.detail;
       console.log("📍 위치 도착!", latitude, longitude);
       setLocation({ latitude, longitude });
+
+      queryClient.invalidateQueries({ queryKey: ["parkingZoneInfo"] });
     };
 
     const listener = (e: Event) => handleLocation(e as CustomEvent);
@@ -46,7 +39,7 @@ export default function Reservation() {
     return () => {
       window.removeEventListener("userLocation", listener);
     };
-  }, []);
+  }, [queryClient, setLocation]);
 
   // 쿼리
   const { data, isLoading, isError } = useQuery({
@@ -61,20 +54,28 @@ export default function Reservation() {
 
   const parkingZones: ParkingZone[] = data?.parkingZones ?? [];
 
-  if (!location) return <div>위치 정보를 기다리는 중...</div>;
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
-
   return (
     <div className="px-6 flex flex-col w-full gap-4">
       <ReservationHeader />
-      <div className="flex flex-row overflow-x-auto w-full gap-2 scrollbar-hide">
-        {parkingZones.slice(0, 3).map((zone, idx) => (
-          <div key={idx} className="flex flex-shrink-0">
-            <ReservationComponents data={zone} />
-          </div>
-        ))}
-      </div>
+      {(isLoading || !location) && (
+        <div className="flex flex-row overflow-x-auto w-full gap-2 scrollbar-hide">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      )}
+
+      {isError && <div>데이터를 불러오는 중 오류가 발생했습니다.</div>}
+
+      {!isLoading && location && parkingZones.length > 0 && (
+        <div className="flex flex-row overflow-x-auto w-full gap-2 scrollbar-hide">
+          {parkingZones.slice(0, 3).map((zone, idx) => (
+            <div key={idx} className="flex flex-shrink-0">
+              <ReservationComponents data={zone} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

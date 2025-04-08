@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReservationDetailComponents from "./ReservationDetailComponent";
-import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
+import ReservationDetailSkeleton from "./ReservationDetailSkeleton";
 
 export interface ParkingZone {
   isFavorite: boolean;
@@ -27,42 +27,36 @@ export interface ParkingZone {
   thumbnail: string;
 }
 
-export default function ReservationList() {
-  const [parkingZones, setParkingZones] = useState<ParkingZone[]>([]);
-  const [location, setLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+interface Props {
+  parkingZones: ParkingZone[];
+  isLoading: boolean;
+  isError: boolean;
+}
 
+export default function ReservationList({ parkingZones, isLoading, isError }: Props) {
   useEffect(() => {
-    const handleLocation = (
-      event: CustomEvent<{ latitude: number; longitude: number }>
-    ) => {
-      const { latitude, longitude } = event.detail;
-      console.log("ReservationList 위치 도착!", latitude, longitude);
-      setLocation({ latitude, longitude });
-    };
+    if (!isLoading && parkingZones.length > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [isLoading, parkingZones]);
 
-    const listener = (e: Event) => handleLocation(e as CustomEvent);
-    window.addEventListener("userLocation", listener);
-    return () => window.removeEventListener("userLocation", listener);
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4 items-center">
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <ReservationDetailSkeleton key={idx} />
+        ))}
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!location) return;
-      try {
-        const res = await fetchParkingZoneList(location);
-        setParkingZones(res.parkingZones);
-      } catch (err) {
-        console.error("주차장 목록 불러오기 실패:", err);
-      }
-    };
-
-    fetchData();
-  }, [location]);
-
-  if (!location) return <div>위치 정보를 기다리는 중...</div>;
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 font-semibold">
+        ❌ 주차장 정보를 불러오는 데 실패했습니다.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">

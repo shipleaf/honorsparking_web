@@ -3,9 +3,11 @@
 import SideBar from "@/app/common/SideBar";
 import Image from "next/image";
 import React, { useState } from "react";
+import { TbCurrentLocation } from "react-icons/tb";
 
 export default function ReservationHeader() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleSideBar = () => {
     setIsSideBarOpen(true);
@@ -15,6 +17,18 @@ export default function ReservationHeader() {
     setIsSideBarOpen(false);
   };
 
+  const handleLocationClick = () => {
+    setIsLoading(true);
+
+    // 2초 후 로딩 false
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    // 위치 요청 메시지 전송 (원한다면 여기에 추가 가능)
+    // window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "GET_LOCATION" }));
+  };
+
   return (
     <div className="relative w-full">
       <div className="grid grid-cols-5 items-center p-6 w-full">
@@ -22,7 +36,17 @@ export default function ReservationHeader() {
           <Image src="/src/icon/SideBar.svg" alt="" width={24} height={24} />
         </button>
         <span className="font-[700] text-center col-span-3">주차장 예약</span>
+        <div className="flex items-center justify-end">
+          {isLoading ? (
+            <div className="loader" ></div>
+          ) : (
+            <button onClick={handleLocationClick}>
+              <TbCurrentLocation size={20} />
+            </button>
+          )}
+        </div>
       </div>
+
       <div
         className={`fixed inset-0 bg-black bg-opacity-40 transition-opacity duration-300 ${
           isSideBarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
