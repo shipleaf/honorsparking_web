@@ -27,7 +27,11 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/payment/tosspayment/page.tsx"
-, "app/fail/page.tsx", "app/success/page.tsx"  ],
+    "app/payment/tosspayment/page.tsx",
+    "app/fail/page.tsx",
+    "app/success/page.tsx",
+    "src",
+    "global.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
