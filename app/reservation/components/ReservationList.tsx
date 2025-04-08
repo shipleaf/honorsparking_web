@@ -30,17 +30,25 @@ export interface ParkingZone {
 interface Props {
   parkingZones: ParkingZone[];
   isLoading: boolean;
+  isFetching: boolean;
   isError: boolean;
 }
 
-export default function ReservationList({ parkingZones, isLoading, isError }: Props) {
+export default function ReservationList({
+  parkingZones,
+  isLoading,
+  isFetching,
+  isError,
+}: Props) {
+  const shouldShowSkeleton = isLoading || isFetching;
+
   useEffect(() => {
-    if (!isLoading && parkingZones.length > 0) {
+    if (!shouldShowSkeleton && parkingZones.length > 0) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [isLoading, parkingZones]);
+  }, [shouldShowSkeleton, parkingZones]);
 
-  if (isLoading) {
+  if (shouldShowSkeleton) {
     return (
       <div className="flex flex-col gap-4 items-center">
         {Array.from({ length: 3 }).map((_, idx) => (

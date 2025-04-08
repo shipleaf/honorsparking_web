@@ -26,6 +26,7 @@ export default function Page() {
     data,
     isLoading: isQueryLoading,
     isError,
+    isFetching,
   } = useQuery({
     queryKey: ["parkingZoneInfo", location],
     queryFn: () => {
@@ -128,6 +129,7 @@ export default function Page() {
         <ReservationList
           parkingZones={parkingZones}
           isLoading={isQueryLoading || !location}
+          isFetching={isFetching}
           isError={isError}
         />
       </div>
