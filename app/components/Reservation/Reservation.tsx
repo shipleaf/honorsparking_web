@@ -13,30 +13,37 @@ export default function Reservation() {
     longitude: number;
   } | null>(null);
 
+  // 🔥 앱(WebView)에게 위치 요청 보내기
+  useEffect(() => {
+    window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "GET_LOCATION" }));
+    console.log("📡 위치 요청 전송 (GET_LOCATION)");
+  }, []);
+
+  // 📥 앱으로부터 위치 이벤트 받기
   useEffect(() => {
     const handleLocation = (
       event: CustomEvent<{ latitude: number; longitude: number }>
     ) => {
       const { latitude, longitude } = event.detail;
-      console.log("위치 도착!", latitude, longitude);
-      setLocation({ latitude, longitude }); // 위치 저장
+      console.log("📍 위치 도착!", latitude, longitude);
+      setLocation({ latitude, longitude });
     };
 
     const listener = (e: Event) => handleLocation(e as CustomEvent);
-
     window.addEventListener("userLocation", listener);
     return () => {
       window.removeEventListener("userLocation", listener);
     };
   }, []);
 
+  // 쿼리
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["parkingZoneInfo", location], // location이 queryKey에 들어가야 refetch 됨
+    queryKey: ["parkingZoneInfo", location],
     queryFn: () => {
       if (!location) throw new Error("위치 정보가 없습니다");
       return fetchParkingZoneList(location);
     },
-    enabled: !!location, // location 있을 때만 실행
+    enabled: !!location,
     retry: false,
   });
 
