@@ -40,18 +40,56 @@ export default function Page() {
 
   const handleLocationClick = () => {
     setIsLoading(true);
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({ type: "GET_LOCATION" })
-    );
+
+    const isApp =
+      typeof navigator !== "undefined" &&
+      navigator.userAgent.includes("Honors-WebView");
+
+    if (isApp) {
+      // ✅ 앱이라면 WebView로 위치 요청
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "GET_LOCATION" })
+      );
+      console.log("📡 앱에서 위치 요청");
+    } else {
+      // 🌍 웹 브라우저라면 Geolocation API 사용
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log("🌍 웹 위치 수신:", latitude, longitude);
+            useLocationStore.getState().setLocation({ latitude, longitude });
+            setIsLoading(false);
+          },
+          (error) => {
+            console.error("❌ 위치 가져오기 실패:", error);
+            setIsLoading(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          }
+        );
+      } else {
+        console.warn("❌ 브라우저가 위치 정보를 지원하지 않습니다.");
+        setIsLoading(false);
+      }
+    }
   };
 
   useEffect(() => {
     const handleUserLocation = (e: CustomEvent) => {
       const newLocation = e.detail;
       if (newLocation?.latitude && newLocation?.longitude) {
-        useLocationStore.getState().setLocation(newLocation);
+        // ⏳ 최소 1초 지연 후 상태 설정 + 로딩 종료
+        setTimeout(() => {
+          useLocationStore.getState().setLocation(newLocation);
+          setIsLoading(false); // 위치 반영 후 로딩 끝
+        }, 1000);
+      } else {
+        setIsLoading(false); // 위치 정보가 없을 때도 로딩 종료
       }
-      setIsLoading(false);
     };
 
     window.addEventListener(
