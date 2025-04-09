@@ -36,18 +36,17 @@ export default function Page() {
     retry: false,
   });
 
-  const handleLocationClick = () => {
-    setIsLoading(true);
-
-    const isApp =
+  const isApp =
       typeof navigator !== "undefined" &&
       navigator.userAgent.includes("Honors-WebView");
+
+  const handleLocationClick = () => {
+    setIsLoading(true);
 
     if (isApp) {
       window.ReactNativeWebView?.postMessage(
         JSON.stringify({ type: "GET_LOCATION" })
       );
-      console.log("📡 앱에서 위치 요청");
     } else {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -85,7 +84,7 @@ export default function Page() {
         setTimeout(() => {
           useLocationStore.getState().setLocation(newLocation);
           setIsLoading(false);
-        }, 1000);
+        }, 300);
       } else {
         setIsLoading(false);
       }
