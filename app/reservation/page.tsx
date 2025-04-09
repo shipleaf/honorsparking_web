@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { TbCurrentLocation } from "react-icons/tb";
 import FooterNav from "@/app/common/FooterNav";
 import SideBar from "@/app/common/SideBar";
 import ReservationList from "./components/ReservationList";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocationStore } from "@/store/locationStore";
 import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
@@ -14,7 +13,6 @@ import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
 export default function Page() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  // const [searchInput, setSearchInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleSideBar = () => setIsSideBarOpen(true);
@@ -46,20 +44,21 @@ export default function Page() {
       navigator.userAgent.includes("Honors-WebView");
 
     if (isApp) {
-      // ✅ 앱이라면 WebView로 위치 요청
       window.ReactNativeWebView?.postMessage(
         JSON.stringify({ type: "GET_LOCATION" })
       );
       console.log("📡 앱에서 위치 요청");
     } else {
-      // 🌍 웹 브라우저라면 Geolocation API 사용
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
             console.log("🌍 웹 위치 수신:", latitude, longitude);
-            useLocationStore.getState().setLocation({ latitude, longitude });
-            setIsLoading(false);
+
+            setTimeout(() => {
+              useLocationStore.getState().setLocation({ latitude, longitude });
+              setIsLoading(false);
+            }, 1000);
           },
           (error) => {
             console.error("❌ 위치 가져오기 실패:", error);
@@ -78,30 +77,74 @@ export default function Page() {
     }
   };
 
+  // ✅ 앱에서 위치 응답 처리
   useEffect(() => {
     const handleUserLocation = (e: CustomEvent) => {
       const newLocation = e.detail;
       if (newLocation?.latitude && newLocation?.longitude) {
-        // ⏳ 최소 1초 지연 후 상태 설정 + 로딩 종료
         setTimeout(() => {
           useLocationStore.getState().setLocation(newLocation);
-          setIsLoading(false); // 위치 반영 후 로딩 끝
+          setIsLoading(false);
         }, 1000);
       } else {
-        setIsLoading(false); // 위치 정보가 없을 때도 로딩 종료
+        setIsLoading(false);
       }
     };
 
-    window.addEventListener(
-      "userLocation",
-      handleUserLocation as EventListener
-    );
+    window.addEventListener("userLocation", handleUserLocation as EventListener);
     return () =>
-      window.removeEventListener(
-        "userLocation",
-        handleUserLocation as EventListener
-      );
+      window.removeEventListener("userLocation", handleUserLocation as EventListener);
   }, []);
+
+  // ✅ location 없으면 자동 위치 요청 (초기 진입 or 새로고침 시)
+  useEffect(() => {
+    if (!location) {
+      setIsLoading(true);
+
+      const isApp =
+        typeof navigator !== "undefined" &&
+        navigator.userAgent.includes("Honors-WebView");
+
+      if (isApp) {
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({ type: "GET_LOCATION" })
+        );
+        console.log("📡 앱에서 위치 요청 (초기 진입)");
+      } else {
+        if (navigator.geolocation) {
+          const timer = setTimeout(() => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const { latitude, longitude } = position.coords;
+                console.log("🌍 웹 위치 수신:", latitude, longitude);
+                useLocationStore
+                  .getState()
+                  .setLocation({ latitude, longitude });
+
+                setTimeout(() => {
+                  setIsLoading(false);
+                }, 1000);
+              },
+              (error) => {
+                console.error("❌ 위치 가져오기 실패:", error);
+                setIsLoading(false);
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0,
+              }
+            );
+          }, 300);
+
+          return () => clearTimeout(timer);
+        } else {
+          console.warn("❌ 브라우저가 위치 정보를 지원하지 않습니다.");
+          setIsLoading(false);
+        }
+      }
+    }
+  }, [location]);
 
   const parkingZones = data?.parkingZones ?? [];
 
