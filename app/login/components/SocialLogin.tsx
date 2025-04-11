@@ -13,7 +13,7 @@ export default function SocialLogin() {
   };
 
   const handleNaverLogin = () => {
-    window.location.href = (`${apiUrl}/api/v1/auth/login/oauth/naver`);
+    window.location.href = `${apiUrl}/api/v1/auth/login/oauth/naver`;
   };
 
   const handleGoogleLogin = () => {
