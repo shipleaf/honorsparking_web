@@ -8,17 +8,49 @@ export default function SocialLogin() {
   const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
   const router = useRouter();
 
+  const isApp =
+    typeof navigator !== "undefined" &&
+    navigator.userAgent.includes("Honors-WebView");
+
   const handleKakaoLogin = () => {
-    router.push(`${apiUrl}/api/v1/auth/login/oauth/kakao`);
+    if (!isApp) {
+      router.push(`${apiUrl}/api/v1/auth/login/oauth/kakao`);
+    } else {
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({
+          type: "SOCIAL_LOGIN",
+          provider: "kakao",
+        })
+      );
+    }
   };
 
   const handleNaverLogin = () => {
-    window.location.href = `${apiUrl}/api/v1/auth/login/oauth/naver`;
+    if (isApp) {
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({
+          type: "SOCIAL_LOGIN",
+          provider: "naver",
+        })
+      );
+    } else {
+      window.location.href = `${apiUrl}/api/v1/auth/login/oauth/naver`;
+    }
   };
 
   const handleGoogleLogin = () => {
-    router.push(`${apiUrl}/api/v1/auth/login/oauth/google`);
+    if (isApp) {
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({
+          type: "SOCIAL_LOGIN",
+          provider: "google",
+        })
+      );
+    } else {
+      router.push(`${apiUrl}/api/v1/auth/login/oauth/google`);
+    }
   };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4 mt-10">
       <span className="text-[#7E7F83] text-[16px] font-[500]">
