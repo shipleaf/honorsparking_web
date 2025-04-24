@@ -56,3 +56,15 @@ export const useSignupStageStore = create<SignupStageState>((set) => ({
       return { stage: newStage };
     }),
 }));
+
+interface CsrfState {
+  token: string | null;
+  headerName: string;
+  setCsrf: (token: string, headerName: string) => void;
+}
+
+export const useCsrfStore = create<CsrfState>((set) => ({
+  token: null,
+  headerName: "X-XSRF-TOKEN", // 기본값 (서버 응답에 따라 변경됨)
+  setCsrf: (token, headerName) => set({ token, headerName }),
+}));

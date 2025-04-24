@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
+import { getCsrf } from "@/app/api/useSocialLoginAPI";
+import { useCsrfStore } from "@/store/useSignupStore";
 
 export default function LoginFormContainer() {
   const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
@@ -31,37 +33,33 @@ export default function LoginFormContainer() {
     }
   };
 
-  const handleLogin = async () => {
+  const loginAndFetchNewCsrf = async () => {
     try {
-      const response = await axios.post(
+      // 1️⃣ 로그인 전 토큰
+      const { token: preToken, headerName } = await getCsrf();
+
+      // 2️⃣ 로그인
+      await axios.post(
         `${apiUrl}/api/v1/auth/login`,
-        {
-          username: id,
-          password: password,
-        },
+        new URLSearchParams({ username: id, password }),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
+            [headerName]: preToken,
           },
           withCredentials: true,
         }
       );
-  
-      const userId = response.data.userId; // ← 로그인 응답에서 유저 ID 가져오는 방식 (API 구조에 따라 맞춰줘야 해)
-  
-      // ✅ React Native 앱으로 메시지 전송
-      if (window.ReactNativeWebView && userId) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: "LOGIN_SUCCESS",
-            userId,
-          })
-        );
-      }
-  
+
+      // 3️⃣ 로그인 후 세션 기반 CSRF 토큰 새로 요청
+      const { token: postToken, headerName: newHeaderName } = await getCsrf();
+
+      // 4️⃣ Zustand에 저장
+      useCsrfStore.getState().setCsrf(postToken, newHeaderName);
+
       router.push("/");
     } catch (error) {
-      console.error("로그인 실패:", error);
+      console.error("로그인 흐름 실패:", error);
       alert("로그인에 실패했습니다.");
     }
   };
@@ -113,7 +111,7 @@ export default function LoginFormContainer() {
             <div className="flex flex-col gap-3 w-[95%] items-center">
               <button
                 className="font-[500] text-white bg-[#093AEE] rounded-[3rem] w-full p-5 text-[17px]"
-                onClick={handleLogin}
+                onClick={loginAndFetchNewCsrf}
               >
                 로그인
               </button>

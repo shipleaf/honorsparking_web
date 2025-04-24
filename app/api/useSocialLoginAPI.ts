@@ -53,3 +53,10 @@ export const logout = async () => {
     throw error;
   }
 };
+
+export const getCsrf = async () => {
+  const response = await axios.get(`${apiUrl}/api/v1/csrf-token`, {
+    withCredentials: true,
+  });
+  return response.data
+};
