@@ -3,14 +3,16 @@
 import { useState } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
-import { getCsrf } from "@/app/api/useSocialLoginAPI";
-import { useCsrfStore } from "@/store/useSignupStore";
+// import { getCsrf } from "@/app/api/useSocialLoginAPI";
+// import { useCsrfStore } from "@/store/useSignupStore";
+// import apiClient from "@/app/api/axiosWithCsrf";
+import axios from "axios";
+
+const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
 export default function LoginFormContainer() {
-  const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
   const router = useRouter();
 
   const [id, setId] = useState("");
@@ -36,26 +38,27 @@ export default function LoginFormContainer() {
   const loginAndFetchNewCsrf = async () => {
     try {
       // 1️⃣ 로그인 전 토큰
-      const { token: preToken, headerName } = await getCsrf();
+      // const { token: preToken, headerName } = await getCsrf();
 
       // 2️⃣ 로그인
-      await axios.post(
+      // await apiClient.post(
+        await axios.post(
         `${apiUrl}/api/v1/auth/login`,
         new URLSearchParams({ username: id, password }),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            [headerName]: preToken,
+            // [headerName]: preToken,
           },
           withCredentials: true,
         }
       );
 
       // 3️⃣ 로그인 후 세션 기반 CSRF 토큰 새로 요청
-      const { token: postToken, headerName: newHeaderName } = await getCsrf();
+      // const { token: postToken, headerName: newHeaderName } = await getCsrf();
 
       // 4️⃣ Zustand에 저장
-      useCsrfStore.getState().setCsrf(postToken, newHeaderName);
+      // useCsrfStore.getState().setCsrf(postToken, newHeaderName);
 
       router.push("/");
     } catch (error) {

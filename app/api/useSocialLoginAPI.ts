@@ -1,4 +1,5 @@
 import axios from "axios";
+// import apiClient from "./axiosWithCsrf";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
@@ -30,7 +31,8 @@ export interface loginState {
 
 export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   try {
-    await axios.post(`${apiUrl}/api/v1/auth/join`, signupData, {
+    // await apiClient.post(`/api/v1/auth/join`, signupData, {
+      await axios.post(`/api/v1/auth/join`, signupData, {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
