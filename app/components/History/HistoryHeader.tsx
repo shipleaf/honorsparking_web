@@ -8,7 +8,7 @@ export default function HistoryHeader() {
     <div className="flex flex-row justify-between">
       <span className="font-[700] text-[22px] text-[#2A2A2A]">주차 내역</span>
       <button className="flex flex-row gap-1 items-center justify-center" onClick={() => router.push("/history")}>
-        <span className="text-[#404041]">자세히보기</span>
+        <span className="text-[#404041]">더보기</span>
         <IoIosArrowForward className="text-[#404041]"/>
       </button>
     </div>
