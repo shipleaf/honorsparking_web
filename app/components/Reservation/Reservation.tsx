@@ -38,12 +38,7 @@ export default function Reservation() {
               queryClient.invalidateQueries({ queryKey: ["parkingZoneInfo"] });
             },
             (error) => {
-              console.error(
-                "❌ 위치 가져오기 실패:",
-                error.message,
-                `(code: ${error.code})`
-              );
-
+              console.error("위치 실패", error.code, error.message);
               // 필요하다면 여기서 사용자에게 위치 권한 안내 문구 표시 가능
               // 예: PERMISSION_DENIED일 때 "위치 권한을 허용해주세요" 같은 안내
             },

@@ -1,15 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import SideBar from "@/app/common/SideBar";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import { fetchMyName } from "@/app/api/MyPageAPI";
 
 export default function MyPageHeader() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const newNotification = 1;
-  const username = "김선엽";
+  const [username, setUsername] = useState<string | null>(null);
 
   const toggleSideBar = () => {
     setIsSideBarOpen(true);
@@ -18,6 +19,19 @@ export default function MyPageHeader() {
   const closeSideBar = () => {
     setIsSideBarOpen(false);
   };
+
+  useEffect(() => {
+    const loadUsername = async () => {
+      try {
+        const name = await fetchMyName();
+        setUsername(name.username);
+      } catch (err) {
+        console.error("이름 불러오기 실패:", err);
+      }
+    };
+
+    loadUsername();
+  }, []);
 
   return (
     <div className="w-full">

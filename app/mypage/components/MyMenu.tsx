@@ -4,6 +4,8 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { logout } from "@/app/api/useSocialLoginAPI";
 
+const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
+
 export default function MyMenu() {
   const router = useRouter();
 
@@ -17,11 +19,24 @@ export default function MyMenu() {
 
   const handleLogout = async () => {
     try {
-      const response = await logout();
-      console.log(response);
+      const res = await fetch(`${apiUrl}/api/v1/session/info`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      const userId = data.userName;
+
+      await logout();
+
+      // 3. 앱이면 메시지 전송
+      if (navigator.userAgent.includes("Honors-WebView")) {
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({ type: "LOGOUT", userId })
+        );
+      }
       router.push("/login");
     } catch (error) {
-      alert(error);
+      console.error("로그아웃 실패:", error);
+      alert("로그아웃 중 오류가 발생했습니다.");
     }
   };
 
