@@ -43,11 +43,11 @@ export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   }
 };
 
-export const SendPhoneAuth = async (phone: string) => {
+export const SendPhoneAuth = async (phoneNumber: string) => {
   try {
     const response = await apiClient.post(
       "/api/v1/phone-auth/send",
-      { phone },
+      { phoneNumber },
       {
         headers: {
           "Content-Type": "application/json",
@@ -99,5 +99,15 @@ export const getCsrf = async () => {
   const response = await axios.get(`${apiUrl}/api/v1/csrf-token`, {
     withCredentials: true,
   });
+  return response.data;
+};
+
+export const checkDuplication = async (id: string) => {
+  const response = await apiClient.get(
+    `${apiUrl}/api/v1/auth/check-authId?authId=${id}`,
+    {
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
