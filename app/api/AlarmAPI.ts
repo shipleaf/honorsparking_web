@@ -1,5 +1,14 @@
-// import axios from "axios";
+import axios from "axios";
 import apiClient from "./axiosWithCsrf";
+
+const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
+
+export const checkUnreadAlarm = async () => {
+  const response = await axios.get(`${apiUrl}/api/v1/alarmUnread`, {
+    withCredentials: true,
+  });
+  return response.data;
+};
 
 export const readSelectedAlarms = async (alarmIDList: number[]) => {
   try {

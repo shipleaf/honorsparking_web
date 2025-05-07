@@ -16,7 +16,7 @@ export default function FooterNav({ currentpage }: FooterNavProps) {
   const router = useRouter();
 
   const handleNavigate = ({ page }: ButtonProps) => {
-    router.push(page === "home" ? `/` : `/${page}`);
+    router.push(page === "home" ? `/home` : `/${page}`);
   };
 
   return (

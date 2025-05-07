@@ -1,21 +1,22 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import { logout } from "@/app/api/useSocialLoginAPI";
+import DecisionModal from "@/app/components/modal/DecisionModal";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
 export default function MyMenu() {
   const router = useRouter();
-
   const handleNavigate = () => {
     router.push("/notice");
   };
-
   const navigatePayInfo = () => {
     router.push("/payment-info");
   };
+
+  const [isLogoutTry, setIsLogoutTry] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -27,18 +28,32 @@ export default function MyMenu() {
 
       await logout();
 
-      // 3. 앱이면 메시지 전송
       if (navigator.userAgent.includes("Honors-WebView")) {
         window.ReactNativeWebView?.postMessage(
           JSON.stringify({ type: "LOGOUT", userId })
         );
       }
+      setIsLogoutTry(false);
       router.push("/login");
     } catch (error) {
       console.error("로그아웃 실패:", error);
+      setIsLogoutTry(false);
       alert("로그아웃 중 오류가 발생했습니다.");
     }
   };
+
+  if (isLogoutTry) {
+    return (
+      <div>
+        <DecisionModal
+          title="정말 로그아웃 하시겠습니까?"
+          body=""
+          onWork={() => handleLogout()}
+          onClose={() => setIsLogoutTry(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="px-6 w-full space-y-4">
@@ -83,7 +98,7 @@ export default function MyMenu() {
         </button>
         <button
           className="flex justify-between items-center bg-white rounded-[12px] p-4"
-          onClick={handleLogout}
+          onClick={() => setIsLogoutTry(true)}
         >
           <span className="font-[600] text-[#2A2A2A] text-[17px]">
             로그아웃

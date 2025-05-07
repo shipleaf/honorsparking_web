@@ -10,3 +10,14 @@ export const fetchMyStatus = async () => {
   console.log("현재 상태 불러오기 성공", response.data);
   return response.data;
 };
+
+export const fetchSessionInfo = async () => {
+  const res = await axios.get(`${apiUrl}/api/v1/session/info`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  });
+  return res.data;
+};
+

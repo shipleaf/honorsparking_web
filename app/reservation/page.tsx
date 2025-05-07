@@ -155,7 +155,7 @@ export default function Page() {
           <button className="justify-self-start pl-2" onClick={toggleSideBar}>
             <Image src="/src/icon/SideBar.svg" alt="" width={24} height={24} />
           </button>
-          <span className="font-[700] text-center col-span-3">주차장 예약</span>
+          <span className="font-[700] text-center col-span-3">주변 주차장</span>
           <div className="flex items-center justify-end">
             {isLoading ? (
               <div className="loader" />
@@ -185,7 +185,6 @@ export default function Page() {
         </div>
       </div>
 
-      {/* 검색 바 + 리스트 */}
       <div className="px-6 w-full">
         <div
           className={`w-full flex flex-row bg-white py-4 px-3 rounded-[12px] items-center gap-1 ${
@@ -203,8 +202,8 @@ export default function Page() {
           />
         </div>
 
-        <div className="font-[700] text-lg mt-8 mb-6">
-          {isFocused ? "검색 결과" : "예약 가능한 주차장"}
+        <div className="font-[700] text-lg mt-8 mb-6"> {/* TODO: 주차장 검색시 타이틀 변경 */}
+          {isFocused ? "주변 주차장" : "주변 주차장"}
         </div>
 
         <ReservationList

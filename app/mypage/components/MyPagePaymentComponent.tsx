@@ -26,7 +26,7 @@ export default function MyPagePaymentComponent() {
   if (!paymentData) {
     return (
       <div className="rounded-[1.25rem] bg-white w-full flex items-center justify-center p-6">
-        <span className="text-[#999] text-sm">현재 주차중이 아닙니다</span>
+        <span className="text-[#999] text-[14px]">현재 주차중이 아닙니다</span>
       </div>
     );
   }
