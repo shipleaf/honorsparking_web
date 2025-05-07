@@ -87,7 +87,7 @@ export default function SideBar() {
               isParkingOpen ? "translate-y-0 h-auto" : "-translate-y-4 h-0"
             }`}
           >
-            <button className="text-[#64656A] text-md">주차장 예약</button>
+            <button className="text-[#64656A] text-md">주차장 찾기</button>
             <button className="text-[#64656A] text-md">주차장 이용 조회</button>
             <button className="text-[#64656A] text-md">
               즐겨찾기한 주차장

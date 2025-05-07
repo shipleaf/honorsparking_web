@@ -35,7 +35,7 @@ export default function ReservationHeader() {
         <button className="justify-self-start pl-2" onClick={toggleSideBar}>
           <Image src="/src/icon/SideBar.svg" alt="" width={24} height={24} />
         </button>
-        <span className="font-[700] text-center col-span-3">주차장 예약</span>
+        <span className="font-[700] text-center col-span-3">주차장 찾기</span>
         <div className="flex items-center justify-end">
           {isLoading ? (
             <div className="loader" ></div>
