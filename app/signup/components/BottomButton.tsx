@@ -22,7 +22,7 @@ export default function BottomButton() {
       {stage === 1 && (
         <div className="w-full flex justify-center">
           <button
-            className="bg-[#D2D2D2] text-[17px] text-[#2a2a2a] font-[500] py-4 w-[80%] rounded-[999px]"
+            className="bg-[#D2D2D2] text-[17px] text-white font-[500] py-4 w-[80%] rounded-[999px]"
             onClick={prevStage}
           >
             이전

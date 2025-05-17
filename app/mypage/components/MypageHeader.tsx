@@ -6,11 +6,14 @@ import { useState } from "react";
 import SideBar from "@/app/common/SideBar";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { fetchMyName } from "@/app/api/MyPageAPI";
+import { useRouter } from "next/navigation";
 
 export default function MyPageHeader() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const newNotification = 1;
   const [username, setUsername] = useState<string | null>(null);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleSideBar = () => {
     setIsSideBarOpen(true);
@@ -23,10 +26,15 @@ export default function MyPageHeader() {
   useEffect(() => {
     const loadUsername = async () => {
       try {
-        const name = await fetchMyName();
+        const namePromise = fetchMyName();
+        const delayPromise = new Promise((resolve) => setTimeout(resolve, 300));
+
+        const [name] = await Promise.all([namePromise, delayPromise]);
         setUsername(name.username);
       } catch (err) {
         console.error("이름 불러오기 실패:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -63,19 +71,27 @@ export default function MyPageHeader() {
             )}
           </button>
         </div>
-        <div className="relative pl-6 py-10 w-full overflow-hidden">
-          <button className="text-white flex items-center">
-            <span className="text-[1.25rem] font-[700]">{username} 님</span>
-            <MdKeyboardArrowRight size={20} />
-          </button>
-          <Image
-            src="/src/image/MyPageCar.png"
-            alt=""
-            width={250}
-            height={20}
-            className="absolute bottom-0 right-0"
-          />
-        </div>
+        {!isLoading ? (
+          <div className="relative pl-6 py-10 w-full overflow-hidden">
+            <button
+              className="text-white flex items-center"
+              onClick={() => router.push("/mypage/profile")}
+            >
+              <span className="text-[1.25rem] font-[700]">{username} 님</span>
+              <MdKeyboardArrowRight size={20} />
+            </button>
+            <Image
+              src="/src/image/MyPageCar.png"
+              alt=""
+              width={250}
+              height={20}
+              className="absolute bottom-0 right-0"
+            />
+          </div>
+        ) : (
+          <div className="relative pl-6 py-10 w-full overflow-hidden"></div>
+        )}
+
         <div
           className={`fixed inset-0 bg-black bg-opacity-40 transition-opacity duration-300 ${
             isSideBarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -92,6 +108,11 @@ export default function MyPageHeader() {
           </div>
         </div>
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 z-[101] flex items-center justify-center bg-white/60">
+          <span className="loader !w-[48px] !bg-[#2221d0]"></span>
+        </div>
+      )}
     </div>
   );
 }

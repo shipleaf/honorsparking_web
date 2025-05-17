@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckPhoneAuth, SendPhoneAuth } from "@/app/api/useSocialLoginAPI";
+import CautionModal from "@/app/components/modal/CautionModal";
 import { useSignupStageStore, useSignupStore } from "@/store/useSignupStore";
 import React, { useEffect, useState } from "react";
 
@@ -10,6 +11,7 @@ export default function PhoneInput() {
   const [isWaitingForAuth, setIsWaitingForAuth] = useState(false);
   const [authValue, setAuthValue] = useState("");
   const [timeLeft, setTimeLeft] = useState(180);
+  const [cautionModal, setCautionModal] = useState(false);
 
   const { setSignupData } = useSignupStore();
   const nextStage = useSignupStageStore((state) => state.nextStage);
@@ -31,7 +33,7 @@ export default function PhoneInput() {
 
   useEffect(() => {
     if (isWaitingForAuth) {
-      setTimeLeft(180); // 카운트다운 초기화 (3분)
+      setTimeLeft(180);
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -64,16 +66,23 @@ export default function PhoneInput() {
     try {
       await SendPhoneAuth(rawPhone);
       setIsWaitingForAuth(true);
-      console.log("✅ 인증번호 요청 성공");
-    } catch {
-      alert("인증번호 요청에 실패했습니다. 다시 시도해주세요.");
+      // eslint-disable-next-line
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        setCautionModal(true);
+      } else {
+        setCautionModal(true);
+      }
     }
   };
 
+  // const handlePhoneAuth = async () => {
+  //   nextStage()
+  // }
+
   const handleVerifyAuth = async () => {
     try {
-      const result = await CheckPhoneAuth(rawPhone, authValue);
-      console.log("✅ 인증 성공:", result);
+      await CheckPhoneAuth(rawPhone, authValue);
       nextStage(); // 다음 단계로 이동
     } catch {
       alert("인증번호가 올바르지 않거나 만료되었습니다.");
@@ -123,6 +132,17 @@ export default function PhoneInput() {
           </div>
         ) : null}
       </div>
+      {cautionModal && (
+        <CautionModal
+          title="이미 가입된 전화번호입니다."
+          body=""
+          onClose={() => {
+            setCautionModal(false);
+            setRawPhone("");
+            setIsValidPhone(false);
+          }}
+        />
+      )}
       {isWaitingForAuth ? (
         <div className="w-full flex items-center justify-between">
           <button
