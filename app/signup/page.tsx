@@ -13,7 +13,7 @@ export default function Page() {
   const stage = useSignupStageStore((state) => state.stage);
 
   return (
-    <div className="bg-[#F0F0F0] w-full h-[100vh] space-y-6">
+    <div className="bg-[#F0F0F0] w-full h-[100vh] space-y-12">
       <ProgressBar />
       {stage === 0 ? (
         <div className="phone">

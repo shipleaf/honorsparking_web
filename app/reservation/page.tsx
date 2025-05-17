@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { TbCurrentLocation } from "react-icons/tb";
 import FooterNav from "@/app/common/FooterNav";
@@ -8,12 +8,22 @@ import SideBar from "@/app/common/SideBar";
 import ReservationList from "./components/ReservationList";
 import { useQuery } from "@tanstack/react-query";
 import { useLocationStore } from "@/store/locationStore";
-import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
+import {
+  fetchParkingZoneList,
+  searchLocalZone,
+  searchParkingZone,
+} from "@/app/api/ParkingZoneAPI";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function Page() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [query, setQuery] = useState("");
+  const [, setParkingResults] = useState([]);
+  const [, setLocalResults] = useState([]);
+
+  const debouncedQuery = useDebounce(query);
 
   const toggleSideBar = () => setIsSideBarOpen(true);
   const closeSideBar = () => setIsSideBarOpen(false);
@@ -36,9 +46,35 @@ export default function Page() {
     retry: false,
   });
 
+  const fetchResults = useCallback(async (searchQuery: string) => {
+    if (!searchQuery) return;
+
+    try {
+      console.log(searchQuery);
+      const parkingData = await searchParkingZone(searchQuery);
+      setParkingResults(parkingData);
+
+      if (!searchQuery || !location) return;
+
+      const localData = await searchLocalZone({
+        keyword: searchQuery,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+      setLocalResults(localData);
+    } catch (error) {
+      console.error("검색 실패:", error);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    fetchResults(debouncedQuery);
+  }, [debouncedQuery, fetchResults]);
+
   const isApp =
-      typeof navigator !== "undefined" &&
-      navigator.userAgent.includes("Honors-WebView");
+    typeof navigator !== "undefined" &&
+    navigator.userAgent.includes("Honors-WebView");
 
   const handleLocationClick = () => {
     setIsLoading(true);
@@ -90,9 +126,15 @@ export default function Page() {
       }
     };
 
-    window.addEventListener("userLocation", handleUserLocation as EventListener);
+    window.addEventListener(
+      "userLocation",
+      handleUserLocation as EventListener
+    );
     return () =>
-      window.removeEventListener("userLocation", handleUserLocation as EventListener);
+      window.removeEventListener(
+        "userLocation",
+        handleUserLocation as EventListener
+      );
   }, []);
 
   // ✅ location 없으면 자동 위치 요청 (초기 진입 or 새로고침 시)
@@ -146,6 +188,10 @@ export default function Page() {
   }, [location]);
 
   const parkingZones = data?.parkingZones ?? [];
+  // eslint-disable-next-line
+  const handleChange = (e: any) => {
+    setQuery(e.target.value);
+  };
 
   return (
     <div className="bg-[#f0f0f0] flex flex-col w-full pb-[12vh] min-h-[100vh]">
@@ -198,11 +244,13 @@ export default function Page() {
             type="text"
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            // onChange={(e) => setSearchInput(e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
-        <div className="font-[700] text-lg mt-8 mb-6"> {/* TODO: 주차장 검색시 타이틀 변경 */}
+        <div className="font-[700] text-lg mt-8 mb-6">
+          {" "}
+          {/* TODO: 주차장 검색시 타이틀 변경 */}
           {isFocused ? "주변 주차장" : "주변 주차장"}
         </div>
 

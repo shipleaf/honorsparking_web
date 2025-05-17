@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import React, { useState } from "react";
-import { useSignupStageStore, useSignupStore } from "@/store/useSignupStore";
+import { useSignupStageStore } from "@/store/useSignupStore";
 
-export default function Agreements() {
-  const { setSignupData } = useSignupStore();
+export default function ExtraAgreements() {
 
   // 체크박스 체크 여부
   const [serviceAgree, setServiceAgree] = useState<boolean>(false);
@@ -94,27 +92,6 @@ export default function Agreements() {
               </div>
             </div>
           </div>
-        </div>
-        <div className="bg-[#fff] rounded-[16px] p-4 space-y-4">
-          <div className="flex gap-2">
-            <Image
-              src="/src/icon/Information.svg"
-              alt=""
-              width={24}
-              height={24}
-            />
-            <span className="text-md font-[700] text-[#2a2a2a]">
-              이메일 (선택)
-            </span>
-          </div>
-          <input
-            type="email"
-            className="w-full bg-[#F0F0F0] p-4 rounded-[12px] focus:outline-none placeholder:font-[500]"
-            placeholder="입력한 이메일로 알림을 받을 수 있어요"
-            onBlur={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setSignupData({ email: e.target.value });
-            }}
-          />
         </div>
       </div>
       <div className="fixed bottom-4 w-full px-6 z-100">

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
 import { getCsrf } from "@/app/api/useSocialLoginAPI";
-import { useCsrfStore } from "@/store/useSignupStore";
+import { useCsrfStore, useSignupStageStore } from "@/store/useSignupStore";
 import apiClient from "@/app/api/axiosWithCsrf";
 // import axios from "axios";
 
@@ -23,6 +23,7 @@ export default function LoginFormContainer() {
 
   const carNumberRegex = /^[0-9]{2,3}[가-힣][0-9]{4}$/;
   const [error, setError] = useState("");
+  const reset = useSignupStageStore((state) => state.reset);
 
   const handleSubmit = () => {
     if (carNumberRegex.test(carNumber)) {
@@ -34,6 +35,11 @@ export default function LoginFormContainer() {
       setError("올바른 차량 번호를 입력하세요. (예: 123가4567)");
     }
   };
+
+  useEffect(() => {
+    reset();
+    // eslint-disable-next-line
+  }, []);
 
   const loginAndFetchNewCsrf = async () => {
     try {

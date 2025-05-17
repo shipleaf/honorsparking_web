@@ -35,3 +35,39 @@ export const fetchParkingZoneHistory = async () => {
     throw error;
   }
 };
+
+export const searchParkingZone = async (keyword: string) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/v1/search/parking?keyword=${keyword}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const searchLocalZone = async ({
+  keyword,
+  latitude,
+  longitude,
+}: {
+  keyword: string;
+  latitude: number;
+  longitude: number;
+}) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/v1/search/local?keyword=${keyword}&latitudeY=${latitude}&longitudeX=${longitude}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
