@@ -8,6 +8,7 @@ import Image from "next/image";
 import { getCsrf, loginWithSessionId } from "@/app/api/useSocialLoginAPI";
 import { useCsrfStore, useSignupStageStore } from "@/store/useSignupStore";
 import apiClient from "@/app/api/axiosWithCsrf";
+import axios from "axios";
 // import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
@@ -44,25 +45,26 @@ export default function LoginFormContainer() {
   const loginAndFetchNewCsrf = async () => {
     try {
       // 1️⃣ 로그인 전 토큰
-      const { token: preToken, headerName } = await getCsrf();
+      // const { token: preToken, headerName } = await getCsrf();
 
       // 2️⃣ 로그인
-      await apiClient.post(
+      // await apiClient.post(
+      await axios.post(
         // await axios.post(
         `${apiUrl}/api/v1/auth/login`,
         new URLSearchParams({ username: id, password }),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            [headerName]: preToken,
+            // [headerName]: preToken,
           },
           withCredentials: true,
         }
       );
 
-      const { token: postToken, headerName: newHeaderName } = await getCsrf();
+      // const { token: postToken, headerName: newHeaderName } = await getCsrf();
 
-      useCsrfStore.getState().setCsrf(postToken, newHeaderName);
+      // useCsrfStore.getState().setCsrf(postToken, newHeaderName);
 
       if (
         typeof navigator !== "undefined" &&
