@@ -7,7 +7,7 @@ import SocialLogin from "./SocialLogin";
 import Image from "next/image";
 import { getCsrf, loginWithSessionId } from "@/app/api/useSocialLoginAPI";
 import { useCsrfStore, useSignupStageStore } from "@/store/useSignupStore";
-import apiClient from "@/app/api/axiosWithCsrf";
+// import apiClient from "@/app/api/axiosWithCsrf";
 import axios from "axios";
 // import axios from "axios";
 
