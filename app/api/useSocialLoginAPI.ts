@@ -31,8 +31,8 @@ export interface loginState {
 
 export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   try {
-    await apiClient.post(`/api/v1/auth/join`, signupData, {
-      // await axios.post(`/api/v1/auth/join`, signupData, {
+    // await apiClient.post(`/api/v1/auth/join`, signupData, {
+    await axios.post(`/api/v1/auth/join`, signupData, {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
@@ -45,7 +45,8 @@ export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
 
 export const SendPhoneAuth = async (phoneNumber: string) => {
   try {
-    const response = await apiClient.post(
+    // const response = await apiClient.post(
+    const response = await axios.post(
       "/api/v1/phone-auth/send",
       { phoneNumber },
       {
@@ -64,7 +65,8 @@ export const SendPhoneAuth = async (phoneNumber: string) => {
 
 export const CheckPhoneAuth = async (phoneNumber: string, authCode: string) => {
   try {
-    const response = await apiClient.post(
+    // const response = await apiClient.post(
+    const response = await axios.post(
       "/api/v1/phone-auth/verify",
       { phoneNumber, authCode },
       {

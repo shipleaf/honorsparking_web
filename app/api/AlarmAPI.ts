@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiClient from "./axiosWithCsrf";
+// import apiClient from "./axiosWithCsrf";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
@@ -12,8 +12,8 @@ export const checkUnreadAlarm = async () => {
 
 export const readSelectedAlarms = async (alarmIDList: number[]) => {
   try {
-    const response = await apiClient.put(
-      // const response = await axios.put(
+    // const response = await apiClient.put(
+    const response = await axios.put(
       `api/v1/alarm`,
       { alarmIDList },
       {
@@ -31,8 +31,8 @@ export const readSelectedAlarms = async (alarmIDList: number[]) => {
 
 export const deleteSelectedAlarms = async (alarmIDList: number[]) => {
   try {
-    const response = await apiClient.delete(`/api/v1/alarm`, {
-      // const response = await axios.delete(`/api/v1/alarm`, {
+    // const response = await apiClient.delete(`/api/v1/alarm`, {
+    const response = await axios.delete(`/api/v1/alarm`, {
       data: { alarmIDList },
       withCredentials: true,
       headers: {

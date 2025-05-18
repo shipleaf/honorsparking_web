@@ -1,4 +1,5 @@
 import axios from "axios";
+// import apiClient from "./axiosWithCsrf";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
@@ -21,3 +22,13 @@ export const fetchSessionInfo = async () => {
   return res.data;
 };
 
+export const checkPassword = async () => {
+  // const response = await apiClient.get(
+  const response = await axios.get(
+    `${apiUrl}/api/v1/mypage/username/password/check`,
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
