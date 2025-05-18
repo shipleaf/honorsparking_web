@@ -5,7 +5,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
-import { getCsrf } from "@/app/api/useSocialLoginAPI";
+import { getCsrf, loginWithSessionId } from "@/app/api/useSocialLoginAPI";
 import { useCsrfStore, useSignupStageStore } from "@/store/useSignupStore";
 import apiClient from "@/app/api/axiosWithCsrf";
 // import axios from "axios";
@@ -82,6 +82,29 @@ export default function LoginFormContainer() {
       alert("로그인에 실패했습니다.");
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    const handler = (event: any) => {
+      try {
+        const { sessionId } = event.detail;
+        if (!sessionId) {
+          return;
+        }
+        loginWithSessionId(sessionId);
+        router.push("/home");
+      } catch (error) {
+        console.error("❌ sessionReceived 이벤트 처리 중 오류:", error); // TODO: 소셜 로그인 오류 모달처리
+      }
+    };
+
+    window.addEventListener("sessionReceived", handler);
+
+    return () => {
+      window.removeEventListener("sessionReceived", handler);
+    };
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div className="bg-white rounded-t-[32px] w-full px-4 py-8 pb-10">
