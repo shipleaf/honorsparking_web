@@ -111,3 +111,17 @@ export const checkDuplication = async (id: string) => {
   );
   return response.data;
 };
+
+export const loginWithSessionId = async (sessionId: string) => {
+  const response = await axios.post(
+    `${apiUrl}/api/v1/auth/custom-session-login`,
+    { sessionId },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
