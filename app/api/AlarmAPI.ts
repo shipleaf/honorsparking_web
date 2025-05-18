@@ -14,7 +14,7 @@ export const readSelectedAlarms = async (alarmIDList: number[]) => {
   try {
     // const response = await apiClient.put(
     const response = await axios.put(
-      `api/v1/alarm`,
+      `${apiUrl}/api/v1/alarm`,
       { alarmIDList },
       {
         withCredentials: true,
@@ -32,7 +32,7 @@ export const readSelectedAlarms = async (alarmIDList: number[]) => {
 export const deleteSelectedAlarms = async (alarmIDList: number[]) => {
   try {
     // const response = await apiClient.delete(`/api/v1/alarm`, {
-    const response = await axios.delete(`/api/v1/alarm`, {
+    const response = await axios.delete(`${apiUrl}/api/v1/alarm`, {
       data: { alarmIDList },
       withCredentials: true,
       headers: {

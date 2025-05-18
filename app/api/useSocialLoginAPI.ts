@@ -32,7 +32,7 @@ export interface loginState {
 export const SignUp = async (signupData: SignupStateAPI): Promise<void> => {
   try {
     // await apiClient.post(`/api/v1/auth/join`, signupData, {
-    await axios.post(`/api/v1/auth/join`, signupData, {
+    await axios.post(`${apiUrl}/api/v1/auth/join`, signupData, {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
@@ -47,7 +47,7 @@ export const SendPhoneAuth = async (phoneNumber: string) => {
   try {
     // const response = await apiClient.post(
     const response = await axios.post(
-      "/api/v1/phone-auth/send",
+      `${apiUrl}/api/v1/phone-auth/send`,
       { phoneNumber },
       {
         headers: {
@@ -67,7 +67,7 @@ export const CheckPhoneAuth = async (phoneNumber: string, authCode: string) => {
   try {
     // const response = await apiClient.post(
     const response = await axios.post(
-      "/api/v1/phone-auth/verify",
+      `${apiUrl}/api/v1/phone-auth/verify`,
       { phoneNumber, authCode },
       {
         headers: {
