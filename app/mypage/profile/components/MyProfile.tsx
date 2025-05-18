@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useRouter } from "next/navigation";
 
-type UserInfo = {
+export type UserInfo = {
   userName: string;
   authId: string;
   phoneNumber: string;
