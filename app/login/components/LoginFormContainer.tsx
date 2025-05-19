@@ -5,8 +5,8 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
-import { getCsrf, loginWithSessionId } from "@/app/api/useSocialLoginAPI";
-import { useCsrfStore, useSignupStageStore } from "@/store/useSignupStore";
+import { loginWithSessionId } from "@/app/api/useSocialLoginAPI";
+import { useSignupStageStore } from "@/store/useSignupStore";
 // import apiClient from "@/app/api/axiosWithCsrf";
 import axios from "axios";
 // import axios from "axios";
@@ -163,8 +163,8 @@ export default function LoginFormContainer() {
                 className="border border-1 border-[#093AEE] font-[500] text-[#093AEE] p-5 w-full text-[17px] rounded-[3rem]"
                 onClick={async () => {
                   try {
-                    const { token, headerName } = await getCsrf();
-                    useCsrfStore.getState().setCsrf(token, headerName);
+                    // const { token, headerName } = await getCsrf();
+                    // useCsrfStore.getState().setCsrf(token, headerName);
                     router.push("/signup");
                   } catch (err) {
                     console.error("회원가입 전 CSRF 토큰 요청 실패:", err);
