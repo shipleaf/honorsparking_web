@@ -7,13 +7,24 @@ import SideBar from "@/app/common/SideBar";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { fetchMyName } from "@/app/api/MyPageAPI";
 import { useRouter } from "next/navigation";
+import { checkUnreadAlarm } from "@/app/api/AlarmAPI";
+import { useQuery } from "@tanstack/react-query";
 
 export default function MyPageHeader() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const newNotification = 1;
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    data: unreadAlarmData,
+    isLoading: isUnreadLoading,
+    isError: isUnreadError,
+  } = useQuery({
+    queryKey: ["unreadAlarm"],
+    queryFn: checkUnreadAlarm,
+    retry: 1,
+  });
 
   const toggleSideBar = () => {
     setIsSideBarOpen(true);
@@ -41,6 +52,14 @@ export default function MyPageHeader() {
     loadUsername();
   }, []);
 
+  if (isLoading || isUnreadLoading) {
+    return (
+      <div className="fixed inset-0 z-[101] flex items-center justify-center bg-[#fff]">
+        <span className="loader !w-[48px] !bg-[#2221d0]"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <div className="relative w-full bg-[#2A2A2A] rounded-b-[6%]">
@@ -53,8 +72,11 @@ export default function MyPageHeader() {
               height={24}
             />
           </button>
-          <button className="justify-self-end">
-            {newNotification > 0 ? (
+          <button
+            className="justify-self-end"
+            onClick={() => router.push("/notice?page=1")}
+          >
+            {isUnreadError && unreadAlarmData > 0 ? (
               <Image
                 src="/src/icon/MyPageNewNotification.svg"
                 alt=""
