@@ -42,19 +42,6 @@ export default function MyMenu() {
     }
   };
 
-  if (isLogoutTry) {
-    return (
-      <div>
-        <DecisionModal
-          title="정말 로그아웃 하시겠습니까?"
-          body=""
-          onWork={() => handleLogout()}
-          onClose={() => setIsLogoutTry(false)}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="px-6 w-full space-y-4">
       <span className="font-[700] text-[1.25rem]">마이메뉴</span>
@@ -106,6 +93,16 @@ export default function MyMenu() {
           <MdKeyboardArrowRight size={20} />
         </button>
       </div>
+      {isLogoutTry && (
+        <div>
+          <DecisionModal
+            title="정말 로그아웃 하시겠습니까?"
+            body=""
+            onWork={() => handleLogout()}
+            onClose={() => setIsLogoutTry(false)}
+          />
+        </div>
+      )}
     </div>
   );
 }

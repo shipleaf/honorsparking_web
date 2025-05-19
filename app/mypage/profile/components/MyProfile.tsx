@@ -18,7 +18,6 @@ export type UserInfo = {
 export default function MyProfile() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [editCarNumberModal, setEditCarNumberModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,7 +86,7 @@ export default function MyProfile() {
                 ? `${userInfo.birthdayYear}-${userInfo.birthday.slice(
                     0,
                     2
-                  )}-${userInfo.birthday.slice(2)}`
+                  )}${userInfo.birthday.slice(2)}`
                 : "-",
           },
         ].map((item) => (
@@ -103,45 +102,8 @@ export default function MyProfile() {
           <span className="text-[#999]">차량번호</span>
           <span>{userInfo.carNumber}</span>
         </div>
-        <div className="px-6 space-x-6">
-          <button
-            className="text-[#093AEE] flex items-center font-[700] text-[14px]"
-            onClick={() => setEditCarNumberModal(true)}
-          >
-            <span>차량번호 변경</span>
-            <MdKeyboardArrowRight />
-          </button>
-        </div>
       </div>
-      {editCarNumberModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl p-6 w-[360px] max-w-[90%] shadow-lg text-center">
-            <h2 className="text-base font-semibold mb-2 text-gray-900">
-              차량번호를 변경하시겠습니까?
-            </h2>
-            <p className="text-sm text-gray-600 mb-6">
-              차량번호는{" "}
-              <span className="font-medium text-[#093AEE]">30일에 한 번</span>만
-              변경할 수 있습니다.
-            </p>
-
-            <div className="flex items-center gap-3">
-              <button
-                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-full font-medium hover:bg-gray-200 transition"
-                onClick={() => setEditCarNumberModal(false)}
-              >
-                취소
-              </button>
-              <button
-                className="flex-1 bg-[#093AEE] text-white py-3 rounded-full font-medium hover:bg-[#072fcc] transition"
-                onClick={() => setEditCarNumberModal(false)}
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }
