@@ -15,3 +15,12 @@ export const fetchMyInfo = async () => {
   });
   return response.data;
 };
+
+export const updateMyInfo = async (carNumber: string) => {
+  const response = await axios.put(
+    `${apiUrl}/api/v1/mypage/car`,
+    { carNumber },
+    { withCredentials: true }
+  );
+  return response.data;
+};
