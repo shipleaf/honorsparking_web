@@ -1,38 +1,63 @@
-import React from "react";
-import CarNumberInput from "../ticket/payment/car-change/components/CarNumberInput";
-// import ChangeButton from "../ticket/payment/car-change/components/ChangeButton";
-import Image from "next/image";
+"use client";
 
-export default function page() {
+import { useEffect, useState } from "react";
+import { useGuestStore } from "@/store/guestStore";
+import { fetchNonMemberParking } from "../api/GuestAPI";
+import { useQuery } from "@tanstack/react-query";
+import { NonMemberParkingEntry } from "../api/GuestAPI";
+
+export default function Page() {
+  const { carNumber } = useGuestStore();
+  const [showModal, setShowModal] = useState(false);
+
+  const { data, isError, isLoading, isFetched } = useQuery({
+    queryKey: ["nonMemberParking", carNumber],
+    queryFn: () => fetchNonMemberParking(carNumber),
+    retry: false,
+    enabled: !!carNumber,
+  });
+
+  useEffect(() => {
+    if (isFetched && (isError || data?.parkingEntries.length === 0)) {
+      setShowModal(true);
+    }
+  }, [isFetched, isError, data]);
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[101] flex items-center justify-center bg-[#fff]">
+        <span className="loader !w-[48px] !bg-[#2221d0]"></span>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-[#F0F0F0]">
-      <div className="relative w-full flex flex-col items-center justify-center gap-2 py-12">
-        <Image src="/src/icon/LoginParking.svg" alt="" width={50} height={30} />
-        <Image
-          src="/src/image/LoginCar.png"
-          alt=""
-          width={280}
-          height={30}
-          className="z-50"
-        />
-        <div className="absolute bg-[#999] w-[80%] h-6 rounded-[50%] blur-[5px] opacity-50 bottom-[40px] z-10"></div>
-      </div>
-      <div className="bg-white rounded-t-[32px] w-full px-4 pt-8">
-        <div className="flex items-center justify-center gap-[30%] mb-6">
-          <div className="font-[700] text-md text-[#7E7F83]">로그인</div>
-          <div className="font-[700] text-md">비회원</div>
+    <div className="p-4">
+      <h2 className="text-xl font-bold">비회원 주차 조회</h2>
+
+      {data?.parkingEntries.map((entry: NonMemberParkingEntry) => (
+        <div key={entry.vehicleNumber} className="mt-4 p-4 border rounded">
+          <p>차량번호: {entry.vehicleNumber}</p>
+          <p>위치: {entry.parkingLotLocation}</p>
+          <p>입차: {new Date(entry.entryTime).toLocaleString()}</p>
+          <p>요금: {entry.currentFee.toLocaleString()}원</p>
         </div>
-        <div className="font-[700] text-[#2a2a2a] text-[1.25rem] p-6">
-          고객님의 차량번호를 입력해 주세요.
+      ))}
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[80%] max-w-sm text-center shadow-lg">
+            <h3 className="text-lg font-bold mb-4">알림</h3>
+            <p className="text-sm text-gray-700 mb-6">주차 중이 아닙니다.</p>
+            <button
+              className="bg-[#093AEE] text-white px-4 py-2 rounded-full"
+              onClick={() => setShowModal(false)}
+            >
+              닫기
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col gap-6 px-6 mt-2">
-          <CarNumberInput />
-        </div>
-        <div className="flex flex-col items-center justify-center gap-4 mt-10"></div>
-      </div>
-      <div className="fixed bg-[#093AEE] w-[90%] bottom-[5vh] left-1/2 -translate-x-1/2 rounded-[999px] p-4 text-white text-center">
-        결제하기
-      </div>
+      )}
     </div>
   );
 }

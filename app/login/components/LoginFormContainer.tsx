@@ -9,6 +9,7 @@ import { loginWithSessionId } from "@/app/api/useSocialLoginAPI";
 import { useSignupStageStore } from "@/store/useSignupStore";
 // import apiClient from "@/app/api/axiosWithCsrf";
 import axios from "axios";
+import { useGuestStore } from "@/store/guestStore";
 // import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
@@ -25,6 +26,7 @@ export default function LoginFormContainer() {
   const carNumberRegex = /^[0-9]{2,3}[가-힣][0-9]{4}$/;
   const [error, setError] = useState("");
   const reset = useSignupStageStore((state) => state.reset);
+  const { setCarNumber: saveCarNumber } = useGuestStore();
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -51,10 +53,9 @@ export default function LoginFormContainer() {
 
   const handleSubmit = () => {
     if (carNumberRegex.test(carNumber)) {
-      setError(""); // 에러 초기화
-      router.push("/result");
-
-      // 여기서 비회원 여부 API 요청, try, catch로 에러 발생시 alert로 이미 등록된 차량입니다를 띄우기
+      setError("");
+      saveCarNumber(carNumber);
+      router.push("/guest");
     } else {
       setError("올바른 차량 번호를 입력하세요. (예: 123가4567)");
     }
