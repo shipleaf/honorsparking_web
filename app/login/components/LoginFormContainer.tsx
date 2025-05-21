@@ -9,8 +9,12 @@ import { loginWithSessionId } from "@/app/api/useSocialLoginAPI";
 import { useSignupStageStore } from "@/store/useSignupStore";
 // import apiClient from "@/app/api/axiosWithCsrf";
 import axios from "axios";
-import { useGuestStore } from "@/store/guestStore";
-// import axios from "axios";
+import {
+  fetchNonMemberParking,
+  NonMemberParkingEntry,
+} from "@/app/api/GuestAPI";
+import GuestContainer from "./GuestContainer";
+import CautionModal from "@/app/components/modal/CautionModal";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
@@ -20,13 +24,34 @@ export default function LoginFormContainer() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [carNumber, setCarNumber] = useState(""); // 상태 추가
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isSelected, setIsSelected] = useState("user");
 
   const carNumberRegex = /^[0-9]{2,3}[가-힣][0-9]{4}$/;
   const [error, setError] = useState("");
   const reset = useSignupStageStore((state) => state.reset);
-  const { setCarNumber: saveCarNumber } = useGuestStore();
+  const [guestEntries, setGuestEntries] = useState<
+    NonMemberParkingEntry[] | null
+  >(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [cautionModal, setCautionModal] = useState(false);
+  const [apiLoading, setApiLoading] = useState(false);
+
+  // const guestEntries = {
+  //   parkingEntries: [
+  //     {
+  //       vehicleNumber: "130테1212",
+  //       parkingLotLocation:
+  //         "경기도 성남시 둔촌대로 545  한라시그마밸리 지하3층",
+  //       entryTime: "2025-05-20T03:12:03",
+  //       totalParkingMinutes: 868,
+  //       currentFee: 27000,
+  //       entryPhotoUrl:
+  //         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/2023_Hyundai_Avante_N_1.jpg/330px-2023_Hyundai_Avante_N_1.jpg",
+  //     },
+  //   ],
+  // };
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -51,20 +76,61 @@ export default function LoginFormContainer() {
     // eslint-disable-next-line
   }, []);
 
-  const handleSubmit = () => {
-    if (carNumberRegex.test(carNumber)) {
-      setError("");
-      saveCarNumber(carNumber);
-      router.push("/guest");
-    } else {
-      setError("올바른 차량 번호를 입력하세요. (예: 123가4567)");
-    }
-  };
-
   useEffect(() => {
     reset();
     // eslint-disable-next-line
   }, []);
+
+  const handleSubmit = async () => {
+    if (!carNumberRegex.test(carNumber)) {
+      setError("올바른 차량 번호를 입력하세요. (예: 123가4567)");
+      return;
+    }
+    setApiLoading(true);
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const result = await fetchNonMemberParking(carNumber);
+
+      if (result.parkingEntries.length === 0) {
+        setTimeout(() => {
+          setModalMessage("주차 중인 차량이 없습니다.");
+          setCautionModal(true);
+          setIsLoading(false);
+          setApiLoading(false);
+          return;
+        }, 500);
+      }
+
+      setGuestEntries(result.parkingEntries);
+      setTimeout(() => {
+        setShowModal(true);
+        setCarNumber("");
+        setIsLoading(false);
+        setApiLoading(false);
+      }, 500);
+    } catch {
+      setTimeout(() => {
+        setModalMessage("비회원 조회 중 오류가 발생했습니다.");
+        setCautionModal(true);
+        setIsLoading(false);
+        setApiLoading(false);
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showModal]);
 
   const loginAndFetchNewCsrf = async () => {
     try {
@@ -108,6 +174,8 @@ export default function LoginFormContainer() {
       alert("로그인에 실패했습니다.");
     }
   };
+
+  const isStillLoading = isLoading || apiLoading;
 
   return (
     <div className="bg-white rounded-t-[32px] w-full px-4 py-8 pb-10">
@@ -214,15 +282,40 @@ export default function LoginFormContainer() {
               </div>
             </div>
             <button
-              className="font-[500] text-white bg-[#093AEE] rounded-[3rem] w-full p-5 text-[17px]"
+              className="font-[500] text-white bg-[#093AEE] rounded-[3rem] w-full p-5 text-[17px] flex items-center justify-center relative"
               onClick={handleSubmit}
+              disabled={isStillLoading}
             >
-              비회원 로그인하기
+              <span
+                className={`${isStillLoading ? "opacity-0" : "opacity-100"}`}
+              >
+                비회원 로그인하기
+              </span>
+              {isStillLoading && (
+                <div className="absolute w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
             </button>
           </div>
         )}
       </div>
       {isSelected == "user" ? <SocialLogin /> : null}
+      {showModal && guestEntries && (
+        <div className="fixed inset-0 z-[100]">
+          <GuestContainer
+            GuestProps={{ entries: guestEntries }}
+            showModal={() => setShowModal(false)}
+          />
+        </div>
+      )}
+      {cautionModal && (
+        <CautionModal
+          title={modalMessage}
+          body=""
+          onClose={() => {
+            setCautionModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
