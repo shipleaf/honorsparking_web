@@ -19,11 +19,20 @@ export default function MainHeader() {
     setIsClient(true);
   }, []);
 
-  const { isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["sessionInfo"],
     queryFn: fetchSessionInfo,
     retry: false,
   });
+
+  useEffect(() => {
+    if (
+      !isLoading &&
+      data?.principal?.authorities?.[0]?.authority === "ROLE_NONE"
+    ) {
+      router.push("/signup/extra");
+    }
+  }, [isLoading, data, router]);
 
   const {
     data: unreadAlarmData,

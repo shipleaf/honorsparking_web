@@ -5,6 +5,7 @@ import { checkPassword } from "@/app/api/UserActivity";
 import axios from "axios";
 import React, { useState } from "react";
 import { UserInfo } from "../../components/MyProfile";
+import CautionModal from "@/app/components/modal/CautionModal";
 // import axios from "axios";
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 
@@ -18,6 +19,8 @@ export default function EditContainer() {
   const [showCarInputModal, setShowCarInputModal] = useState(false);
   const [carInput, setCarInput] = useState("");
   const [carInputError, setCarInputError] = useState("");
+  const [showCautionModal, setShowCautionModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const validateCarNumber = (value: string) => {
     const regex = /^[0-9]{2,3}[가-힣]{1}[0-9]{4}$/;
@@ -214,13 +217,17 @@ export default function EditContainer() {
 
                       try {
                         await updateMyInfo(carInput);
-                        alert("차량번호가 변경되었습니다.");
+                        setModalMessage("차량번호가 변경되었습니다.");
+                        setShowCautionModal(true);
                         const updated = await fetchMyInfo();
                         setUserInfo(updated);
                         setShowCarInputModal(false);
                         setCarInput("");
                       } catch {
-                        alert("차량번호는 30일에 한 번 변경 가능합니다.");
+                        setModalMessage(
+                          "차량번호는 30일에 한 번 변경 가능합니다."
+                        );
+                        setShowCautionModal(true);
                       }
                     }}
                   >
@@ -231,6 +238,18 @@ export default function EditContainer() {
             </div>
           )}
         </div>
+      )}
+      {showCautionModal && (
+        <CautionModal
+          title={modalMessage}
+          body=""
+          onClose={() => {
+            setShowCarInputModal(false);
+            setShowCautionModal(false);
+            setModalMessage("");
+            setCarInput("");
+          }}
+        />
       )}
     </>
   );

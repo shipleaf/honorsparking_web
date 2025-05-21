@@ -22,7 +22,7 @@ export default function PlaceHeader({ setIsDetailPageOpen, zoneName }: Props) {
           color="#2A2A2A"
         />
       </button>
-      <span className="font-[700] text-[17px]">{zoneName}</span>
+      <span className="font-[700] text-[14px]">{zoneName}</span>
     </div>
   );
 }

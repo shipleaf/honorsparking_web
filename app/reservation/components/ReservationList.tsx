@@ -58,12 +58,10 @@ export default function ReservationList({
     );
   }
 
-  
-
   if (isError) {
     return (
       <div className="text-center text-red-500 font-semibold">
-        ❌ 주차장 정보를 불러오는 데 실패했습니다.
+        주차장이 없습니다.
       </div>
     );
   }

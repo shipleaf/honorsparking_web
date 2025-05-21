@@ -65,28 +65,6 @@ export default function FooterNav({ currentpage }: FooterNavProps) {
           주차장
         </span>
       </button>
-      {/* <button
-        className="flex flex-col justify-center items-center gap-2"
-        onClick={() => handleNavigate({ page: "ticket" })}
-      >
-        <Image
-          src={
-            currentpage === "ticket"
-              ? "/src/icon/OnTicket.svg"
-              : "/src/icon/Ticket.svg"
-          }
-          alt=""
-          width={24}
-          height={24}
-        />
-        <span
-          className={`${
-            currentpage === "ticket" ? "text-white" : "text-[#64656A]"
-          } font-[500] text-[14px]`}
-        >
-          이용권
-        </span>
-      </button> */}
       <button
         className="flex flex-col justify-center items-center gap-2"
         onClick={() => handleNavigate({ page: "mypage" })}

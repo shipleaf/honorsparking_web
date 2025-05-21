@@ -38,7 +38,7 @@ export default function ReservationHeader() {
         <span className="font-[700] text-center col-span-3">주차장 찾기</span>
         <div className="flex items-center justify-end">
           {isLoading ? (
-            <div className="loader" ></div>
+            <div className="loader"></div>
           ) : (
             <button onClick={handleLocationClick}>
               <TbCurrentLocation size={20} />

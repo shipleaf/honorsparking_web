@@ -76,7 +76,16 @@ export default function MyProfile() {
       <div className="flex flex-col px-6 gap-3">
         {[
           { label: "이름", value: userInfo.userName },
-          { label: "아이디", value: userInfo.authId },
+          {
+            label: "아이디",
+            value: (() => {
+              const platformPrefixes = ["kakao", "naver", "google"];
+              const matched = platformPrefixes.find((prefix) =>
+                userInfo.authId.startsWith(prefix)
+              );
+              return matched ?? userInfo.authId;
+            })(),
+          },
           { label: "이메일", value: userInfo.email },
           { label: "연락처", value: userInfo.phoneNumber },
           {
@@ -103,7 +112,6 @@ export default function MyProfile() {
           <span>{userInfo.carNumber}</span>
         </div>
       </div>
-      
     </div>
   );
 }

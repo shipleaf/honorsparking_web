@@ -165,7 +165,11 @@ export default function LoginFormContainer() {
         );
         console.log("📡 LOGIN_SUCCESS 메시지 전송 완료");
       }
-      router.push("/home");
+      
+      setTimeout(() => {
+        router.push("/home");
+      }, 200);
+
     } catch (error) {
       console.error("로그인 흐름 실패:", error);
       alert("로그인에 실패했습니다.");
