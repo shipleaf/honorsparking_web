@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateMyInfo } from "@/app/api/MyPageAPI";
+import { updateUserRole } from "@/app/api/UserActivity";
 
 export default function SocialSignupPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function SocialSignupPage() {
   const [carNumber, setCarNumber] = useState("");
   const carNumberRegex = /^[0-9]{2,3}[가-힣][0-9]{4}$/;
   const [carNumberError, setCarNumberError] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const allChecked = serviceAgree && privacyAgree && locationAgree;
 
   const allAgreed = serviceAgree && privacyAgree;
@@ -33,7 +34,11 @@ export default function SocialSignupPage() {
     }
 
     try {
+      setIsLoading(true); // 로딩 시작
+
       await updateMyInfo(carNumber);
+      await updateUserRole();
+
       router.push("/");
       // eslint-disable-next-line
     } catch (error: any) {
@@ -41,12 +46,14 @@ export default function SocialSignupPage() {
 
       if (
         error?.response?.status === 500 &&
-        error?.response?.data?.message?.includes("아직 등록") // 서버 응답에 따라 조정
+        error?.response?.data?.message?.includes("아직 등록")
       ) {
         setCarNumberError("이미 등록된 차량입니다.");
       } else {
         setCarNumberError("차량번호 등록 중 오류가 발생했습니다.");
       }
+    } finally {
+      setIsLoading(false); // 로딩 종료
     }
   };
 
@@ -153,6 +160,11 @@ export default function SocialSignupPage() {
           가입하기
         </button>
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80">
+          <span className="loader !w-[48px] !bg-[#2221d0]"></span>
+        </div>
+      )}
     </div>
   );
 }
