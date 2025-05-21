@@ -2,7 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['static.toss.im', 'res.cloudinary.com'], // 허용할 이미지 호스트 도메인 추가
+    domains: ["static.toss.im", "res.cloudinary.com"],
+    remotePatterns: [
+      { protocol: "https", hostname: "upload.wikimedia.org" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
   },
 };
 
