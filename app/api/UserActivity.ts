@@ -33,3 +33,12 @@ export const checkPassword = async (password: string) => {
   );
   return response.data;
 };
+
+export const updateUserRole = async () => {
+  const response = await axios.put(
+    `${apiUrl}/api/v1/mypage/role/user`,
+    {},
+    { withCredentials: true }
+  );
+  return response.data;
+};
