@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateMyInfo } from "@/app/api/MyPageAPI";
 import { updateUserRole } from "@/app/api/UserActivity";
+import { logout } from "@/app/api/useSocialLoginAPI";
 
 export default function SocialSignupPage() {
   const router = useRouter();
@@ -146,19 +147,28 @@ export default function SocialSignupPage() {
             <p className="text-sm text-red-500 mt-1">{carNumberError}</p>
           )}
         </div>
-
-        <button
-          onClick={handleSubmit}
-          disabled={!isSubmitEnabled}
-          className={`w-full py-3 rounded-full text-white text-sm font-medium transition
+        <div className="space-y-4">
+          <button
+            onClick={handleSubmit}
+            disabled={!isSubmitEnabled}
+            className={`w-full py-3 rounded-full text-white text-sm font-medium transition
             ${
               isSubmitEnabled
                 ? "bg-[#093AEE]"
                 : "bg-[#D2D2D2] cursor-not-allowed"
             }`}
-        >
-          가입하기
-        </button>
+          >
+            가입하기
+          </button>
+          <button
+            onClick={async () => {
+              await logout();
+            }}
+            className="w-full py-3 rounded-full text-white text-sm font-medium transition bg-[#093AEE]/50"
+          >
+            가입취소
+          </button>
+        </div>
       </div>
       {isLoading && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80">
