@@ -94,16 +94,15 @@ export default function LoginFormContainer() {
       const result = await fetchNonMemberParking(carNumber);
 
       if (result.parkingEntries.length === 0) {
-        setTimeout(() => {
-          setModalMessage("주차 중인 차량이 없습니다.");
-          setCautionModal(true);
-          setIsLoading(false);
-          setApiLoading(false);
-          return;
-        }, 500);
+        setModalMessage("주차 중인 차량이 없습니다.");
+        setCautionModal(true);
+        setIsLoading(false);
+        setApiLoading(false);
+        return; // 즉시 함수 종료!
       }
 
       setGuestEntries(result.parkingEntries);
+
       setTimeout(() => {
         setShowModal(true);
         setCarNumber("");
@@ -111,12 +110,10 @@ export default function LoginFormContainer() {
         setApiLoading(false);
       }, 500);
     } catch {
-      setTimeout(() => {
-        setModalMessage("비회원 조회 중 오류가 발생했습니다.");
-        setCautionModal(true);
-        setIsLoading(false);
-        setApiLoading(false);
-      }, 500);
+      setModalMessage("비회원 조회 중 오류가 발생했습니다.");
+      setCautionModal(true);
+      setIsLoading(false);
+      setApiLoading(false);
     }
   };
 
