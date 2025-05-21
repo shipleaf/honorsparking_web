@@ -48,9 +48,11 @@ export default function History() {
     <div className="w-full p-6 flex flex-col gap-4">
       <HistoryHeader />
       {parkingHistory.length > 0 ? (
-        parkingHistory.map((history) => (
-          <HistoryComponents key={history.id} data={history} />
-        ))
+        parkingHistory
+          .slice(0, 3)
+          .map((history) => (
+            <HistoryComponents key={history.id} data={history} />
+          ))
       ) : (
         <div className="flex items-center justify-center">
           <p className="text-center text-[#999] py-10">

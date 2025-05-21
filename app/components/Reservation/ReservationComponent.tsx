@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function ReservationComponents({ data }: Props) {
-
   return (
     <div className="flex flex-col w-full bg-[#fff] p-4 rounded-[16px] gap-4">
       {/* 예약 컴포넌트 헤더 */}
@@ -50,7 +49,9 @@ export default function ReservationComponents({ data }: Props) {
             <Image src="/src/icon/ElectCar.svg" alt="" width={30} height={30} />
             <span className="text-[#4C4D4F] font-[500]">전기차</span>
           </div>
-          <span className="text-xl font-[700] pl-3 pb-2">{data?.electricCarSpaceCount}개</span>
+          <span className="text-xl font-[700] pl-3 pb-2">
+            {data?.electricCarSpaceCount}개
+          </span>
         </div>
       </div>
     </div>

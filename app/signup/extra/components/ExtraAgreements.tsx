@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useSignupStageStore } from "@/store/useSignupStore";
 
 export default function ExtraAgreements() {
-
   // 체크박스 체크 여부
   const [serviceAgree, setServiceAgree] = useState<boolean>(false);
   const [privacyAgree, setPrivacyAgree] = useState<boolean>(false);
@@ -45,52 +44,6 @@ export default function ExtraAgreements() {
               </label>
             </div>
             <hr />
-            <div className="flex flex-col gap-3">
-              <div className="flex border border-[#467EE7] rounded-[0.75rem] p-4 items-center gap-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="rounded-[12ox] w-4 h-4 border-[#ACAFB3]"
-                    checked={serviceAgree}
-                    onChange={() => setServiceAgree(!serviceAgree)}
-                  />
-                  <span>(필수) 서비스 이용약관 동의</span>
-                </label>
-                <button className="text-[#ACAFB3] text-[12px] font-[400]">
-                  보기
-                </button>
-              </div>
-              <div className="flex border border-[#467EE7] rounded-[0.75rem] p-4 items-center gap-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="rounded-[12ox] w-4 h-4 border-[#ACAFB3]"
-                    id="privacy"
-                    checked={privacyAgree}
-                    onChange={() => setPrivacyAgree(!privacyAgree)}
-                  />
-                  <span>(필수) 개인정보처리방침 동의</span>
-                </label>
-                <button className="text-[#ACAFB3] text-[12px] font-[400]">
-                  보기
-                </button>
-              </div>
-              <div className="flex border border-[#467EE7] rounded-[0.75rem] p-4 items-center gap-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="rounded-[12ox] w-4 h-4 border-[#ACAFB3]"
-                    id="privacy"
-                    checked={locationAgree}
-                    onChange={() => setLocationAgree(!locationAgree)}
-                  />
-                  <span>(선택) 위치정보처리방침 동의</span>
-                </label>
-                <button className="text-[#ACAFB3] text-[12px] font-[400]">
-                  보기
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

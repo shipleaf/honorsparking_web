@@ -13,7 +13,7 @@ interface GuestProps {
   showModal: () => void;
 }
 
-const formatDateTime = (dateString: string) => {
+export const formatDateTime = (dateString: string) => {
   const date = new Date(dateString);
 
   const pad = (n: number) => n.toString().padStart(2, "0");

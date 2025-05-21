@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocationStore } from "@/store/locationStore";
 import {
   fetchParkingZoneList,
+  LocalParkingZone,
+  ParkingZoneResponse,
   searchLocalZone,
   searchParkingZone,
 } from "@/app/api/ParkingZoneAPI";
@@ -20,8 +22,12 @@ export default function Page() {
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
-  const [, setParkingResults] = useState([]);
-  const [, setLocalResults] = useState([]);
+  const [parkingResults, setParkingResults] =
+    useState<ParkingZoneResponse | null>(null);
+
+  const [localResults, setLocalResults] = useState<LocalParkingZone | null>(
+    null
+  );
 
   const debouncedQuery = useDebounce(query);
 
@@ -29,6 +35,14 @@ export default function Page() {
   const closeSideBar = () => setIsSideBarOpen(false);
 
   const location = useLocationStore((state) => state.location);
+  const [selectedPlaceInfo, setSelectedPlaceInfo] = useState<null | {
+    placeName: string;
+    roadAddressName?: string;
+  }>(null);
+
+  const [selectedPlaceParkingZones, setSelectedPlaceParkingZones] = useState<
+    ParkingZoneResponse["parkingZones"] | null
+  >(null);
 
   const {
     data,
@@ -46,27 +60,27 @@ export default function Page() {
     retry: false,
   });
 
-  const fetchResults = useCallback(async (searchQuery: string) => {
-    if (!searchQuery) return;
-
-    try {
-      console.log(searchQuery);
-      const parkingData = await searchParkingZone(searchQuery);
-      setParkingResults(parkingData);
-
+  const fetchResults = useCallback(
+    async (searchQuery: string) => {
       if (!searchQuery || !location) return;
 
-      const localData = await searchLocalZone({
-        keyword: searchQuery,
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
-      setLocalResults(localData);
-    } catch (error) {
-      console.error("검색 실패:", error);
-    }
-    // eslint-disable-next-line
-  }, []);
+      try {
+        const [parkingData, localData] = await Promise.all([
+          searchParkingZone(searchQuery),
+          searchLocalZone({
+            keyword: searchQuery,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          }),
+        ]);
+        setParkingResults(parkingData);
+        setLocalResults(localData);
+      } catch (error) {
+        console.error("검색 실패:", error);
+      }
+    },
+    [location]
+  );
 
   useEffect(() => {
     fetchResults(debouncedQuery);
@@ -188,9 +202,41 @@ export default function Page() {
   }, [location]);
 
   const parkingZones = data?.parkingZones ?? [];
+
+  // parkingZones 선택 로직
+  const resolvedParkingZones = parkingResults?.parkingZones
+    ? parkingResults.parkingZones
+    : parkingZones;
+
   // eslint-disable-next-line
   const handleChange = (e: any) => {
     setQuery(e.target.value);
+  };
+
+  const handlePlaceClick = async (doc: {
+    placeName: string;
+    roadAddressName?: string;
+    y: string;
+    x: string;
+  }) => {
+    try {
+      setIsLoading(true);
+      setSelectedPlaceInfo({
+        placeName: doc.placeName,
+        roadAddressName: doc.roadAddressName,
+      });
+
+      const data = await fetchParkingZoneList({
+        latitude: Number(doc.y),
+        longitude: Number(doc.x),
+      });
+
+      setSelectedPlaceParkingZones(data.parkingZones);
+    } catch (err) {
+      console.error("🔴 관련 장소 주차장 검색 실패:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -213,7 +259,6 @@ export default function Page() {
           </div>
         </div>
 
-        {/* 사이드바 */}
         <div
           className={`fixed inset-0 bg-black bg-opacity-40 transition-opacity duration-300 ${
             isSideBarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -231,7 +276,7 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="px-6 w-full">
+      <div className="px-6 w-full mb-6">
         <div
           className={`w-full flex flex-row bg-white py-4 px-3 rounded-[12px] items-center gap-1 ${
             isFocused ? "border border-1 border-[#093AEE]" : "border"
@@ -248,20 +293,53 @@ export default function Page() {
           />
         </div>
 
-        <div className="font-[700] text-lg mt-8 mb-6">
-          {" "}
-          {/* TODO: 주차장 검색시 타이틀 변경 */}
-          {isFocused ? "주변 주차장" : "주변 주차장"}
+        <div className="font-[700] text-lg mt-8 mb-2">
+          {selectedPlaceInfo
+            ? `"${selectedPlaceInfo.placeName}" 주변 주차장`
+            : query
+            ? "검색 주차장"
+            : "주변 주차장"}
         </div>
 
+        {query &&
+          resolvedParkingZones.length === 0 &&
+          !selectedPlaceParkingZones && (
+            <div className="text-sm text-gray-500 mb-6 w-full text-center">
+              해당 주차장이 없습니다.
+            </div>
+          )}
+
         <ReservationList
-          parkingZones={parkingZones}
+          parkingZones={selectedPlaceParkingZones ?? resolvedParkingZones}
           isLoading={isLoading}
           isFetching={isFetching}
           isError={isError}
         />
       </div>
 
+      {localResults && localResults.documents.length > 0 && (
+        <div className="px-6">
+          <h2 className="font-bold text-lg mb-4">관련 장소</h2>
+          {localResults.documents.map((doc, index) => (
+            <div
+              key={index}
+              onClick={() => handlePlaceClick(doc)}
+              className="bg-white p-4 mb-3 shadow-sm rounded-[28px] flex justify-between cursor-pointer"
+            >
+              <div>
+                <div className="text-[16px] font-semibold">{doc.placeName}</div>
+                <div className="text-sm text-[#7E7F83]">
+                  {doc.roadAddressName}
+                </div>
+                <div className="text-xs text-[#aaa]">{doc.categoryName}</div>
+              </div>
+              <div className="text-xs text-[#aaa]">
+                {(Number(doc.distance) / 1000).toFixed(1)}km
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       <FooterNav currentpage="parking" />
     </div>
   );
