@@ -35,15 +35,18 @@ export default function SocialSignupPage() {
     }
 
     try {
-      setIsLoading(true); // 로딩 시작
+      const carResult = await updateMyInfo(carNumber);
+      if (carResult.success) console.log("차량번호 등록 성공");
 
-      await updateMyInfo(carNumber);
-      await updateUserRole();
+      const roleResult = await updateUserRole();
+      if (roleResult.success) console.log("롤 변경 실패");
 
+      // window.location.href = "/";
       router.push("/");
       // eslint-disable-next-line
     } catch (error: any) {
-      console.error("차량번호 등록 실패:", error);
+      console.error("🚨 에러 발생:", error);
+      setCarNumberError("회원가입 중 오류가 발생했습니다.");
 
       if (
         error?.response?.status === 500 &&
