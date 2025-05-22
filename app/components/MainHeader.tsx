@@ -23,7 +23,6 @@ export default function MainHeader() {
     queryKey: ["sessionInfo"],
     queryFn: fetchSessionInfo,
     retry: false,
-    refetchInterval: 5000,
   });
 
   useEffect(() => {

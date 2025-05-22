@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { fetchMyStatus } from "@/app/api/UserActivity";
 import { ParkingStatusResponse } from "@/app/components/UserStatus";
+import { useQuery } from "@tanstack/react-query";
 
 // const data = {
 //   parkingZone: {
@@ -35,32 +36,27 @@ const formatElapsedTime = (entranceTimeISO: string) => {
 
 export default function MyPagePaymentComponent() {
   const router = useRouter();
-  const [paymentData, setPaymentData] = useState<ParkingStatusResponse | null>(
-    null
-  );
+  // const [paymentData, setPaymentData] = useState<ParkingStatusResponse | null>(
+  //   null
+  // );
 
   // useEffect(() => {
   //   setPaymentData(data);
   // }, []);
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const data = await fetchMyStatus();
-        setPaymentData(data);
-      } catch (err) {
-        console.error("유저 정보 불러오기 실패:", err);
-      }
-    };
-    loadUserData();
-  }, []);
+  const { data } = useQuery<ParkingStatusResponse>({
+    queryKey: ["myParkingStatus"],
+    queryFn: fetchMyStatus,
+    retry: false,
+    refetchInterval: 5000, // 5초마다 갱신
+  });
 
-  if (!paymentData) return null;
+  if (!data) return null;
 
   if (
-    ("message" in paymentData &&
-      paymentData.message === "해당 사용자의 주차 기록이 없습니다.") ||
-    ("isParked" in paymentData && paymentData.isParked === false)
+    ("message" in data &&
+      data.message === "해당 사용자의 주차 기록이 없습니다.") ||
+    ("isParked" in data && data.isParked === false)
   ) {
     return (
       <div className="rounded-[1.25rem] bg-white w-full flex items-center justify-center p-6">
@@ -69,29 +65,28 @@ export default function MyPagePaymentComponent() {
     );
   }
 
-  if ("parkingZone" in paymentData && paymentData.parkingZone !== null) {
+  if ("parkingZone" in data && data.parkingZone !== null) {
     return (
       <div className="rounded-[1.25rem] bg-white w-full flex flex-col p-4 gap-2">
         <span className="font-[500] text-[#2A2A2A] text-[14px]">
-          {paymentData.parkingZone?.zoneName}
+          {data.parkingZone?.zoneName}
         </span>
         <div className="flex flex-col">
           <span className="text-[#2A2A2A] font-[700] text-[1.25rem]">
             입차시간:{" "}
-            {paymentData.parkingZone?.entranceTime
-              ? formatElapsedTime(paymentData.parkingZone?.entranceTime)
+            {data.parkingZone?.entranceTime
+              ? formatElapsedTime(data.parkingZone?.entranceTime)
               : "-"}
           </span>
           <span className="text-md font-[400] text-[#7E7F83]">
-            비용: {paymentData.parkingZone.cost?.toLocaleString() ?? 0}원 /
-            시간당{" "}
+            비용: {data.parkingZone.cost?.toLocaleString() ?? 0}원 / 시간당{" "}
           </span>
         </div>
         <button
           className="bg-[#093AEE] text-white text-md font-[500] p-3 rounded-[999px] mt-3"
           onClick={() => router.push("/payment")}
         >
-          {paymentData.parkingZone?.cost?.toLocaleString() ?? 0}원 결제하기
+          {data.parkingZone?.cost?.toLocaleString() ?? 0}원 결제하기
         </button>
       </div>
     );

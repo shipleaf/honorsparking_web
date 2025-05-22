@@ -33,6 +33,7 @@ export default function UserStatus() {
     queryKey: ["myParkingStatus"],
     queryFn: fetchMyStatus,
     retry: false,
+    refetchInterval: 5000,
   });
 
   if (!data) return null;
