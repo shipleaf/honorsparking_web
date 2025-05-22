@@ -76,7 +76,7 @@ export default function MainHeader() {
           className="justify-self-end"
           onClick={() => router.push("/notice?page=1")}
         >
-          {isUnreadError && unreadAlarmData > 0 ? (
+          {isUnreadError && unreadAlarmData.hasUnread ? (
             <Image
               src="/src/icon/NewNotification.svg"
               alt=""
