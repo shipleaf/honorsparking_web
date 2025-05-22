@@ -163,6 +163,7 @@ export default function SocialSignupPage() {
           <button
             onClick={async () => {
               await logout();
+              router.push("/login");
             }}
             className="w-full py-3 rounded-full text-white text-sm font-medium transition bg-[#093AEE]/50"
           >

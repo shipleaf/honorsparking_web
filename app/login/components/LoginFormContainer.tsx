@@ -55,24 +55,21 @@ export default function LoginFormContainer() {
 
   useEffect(() => {
     // eslint-disable-next-line
-    const handler = (event: any) => {
+    const handler = async (event: any) => {
       try {
         const { sessionId } = event.detail;
-        if (!sessionId) {
-          return;
-        }
-        loginWithSessionId(sessionId);
-        router.push("/home");
+        if (!sessionId) return;
+
+        await loginWithSessionId(sessionId); // ✅ await로 로그인 보장
+        router.push("/home"); // ✅ 로그인 성공 후에만 이동
       } catch (error) {
-        console.error("❌ sessionReceived 이벤트 처리 중 오류:", error); // TODO: 소셜 로그인 오류 모달처리
+        console.error("❌ sessionReceived 이벤트 처리 중 오류:", error);
+        alert("소셜 로그인에 실패했습니다.");
       }
     };
 
     window.addEventListener("sessionReceived", handler);
-
-    return () => {
-      window.removeEventListener("sessionReceived", handler);
-    };
+    return () => window.removeEventListener("sessionReceived", handler);
     // eslint-disable-next-line
   }, []);
 
@@ -165,11 +162,10 @@ export default function LoginFormContainer() {
         );
         console.log("📡 LOGIN_SUCCESS 메시지 전송 완료");
       }
-      
+
       setTimeout(() => {
         router.push("/home");
       }, 200);
-
     } catch (error) {
       console.error("로그인 흐름 실패:", error);
       alert("로그인에 실패했습니다.");
