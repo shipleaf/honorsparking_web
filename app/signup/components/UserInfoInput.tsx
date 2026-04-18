@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import DateCalendar from "./DateCalendar";
 import { useSignupStore } from "@/store/useSignupStore";
 import { MdCancel } from "react-icons/md";
+import Input from "@/app/components/ui/Input";
 
 export default function UserInfoInput() {
   const [isBottomSheet, setIsBottomSheet] = useState(false);
@@ -39,12 +40,11 @@ export default function UserInfoInput() {
           />
           <span className="text-md font-[700]">이름</span>
         </div>
-        <input
+        <Input
           type="text"
           placeholder="이름을 입력해주세요"
           value={accountName}
           onChange={handleNameChange}
-          className="bg-[#F0F0F0] p-4 w-full rounded-[12px] focus:outline-none"
         />
       </div>
       <div className="bg-white p-4 rounded-[16px] space-y-2">
@@ -72,12 +72,12 @@ export default function UserInfoInput() {
           <Image src="/src/icon/OnHome.svg" alt="" width={24} height={24} />
           <span className="text-md font-[700]">차량번호</span>
         </div>
-        <input
+        <Input
           type="text"
           placeholder="차량번호를 입력해주세요"
           value={carNumber}
           onChange={handleCarNumberChange}
-          className="bg-[#F0F0F0] p-4 w-full rounded-[12px] focus:outline-none font-[500]"
+          className="font-medium"
         />
       </div>
       <div

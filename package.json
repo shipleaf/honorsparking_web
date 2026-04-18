@@ -6,8 +6,7 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "predev": "lsof -i :3000 | grep LISTEN | awk '{print $2}' | xargs kill -9"
+    "lint": "next lint"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.66.0",

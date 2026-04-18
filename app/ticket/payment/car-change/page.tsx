@@ -2,7 +2,7 @@ import React from "react";
 import CarChangeHeader from "./components/CarChangeHeader";
 import SelectModel from "./components/SelectModel";
 import CarNumberInput from "./components/CarNumberInput";
-import ChangeButton from "./components/ChangeButton";
+import Button from "@/app/components/ui/Button";
 
 export default function page() {
   return (
@@ -15,7 +15,9 @@ export default function page() {
         <SelectModel />
         <CarNumberInput />
       </div>
-      <ChangeButton />
+      <div className="fixed w-[90%] bottom-[5vh] left-1/2 -translate-x-1/2">
+        <Button fullWidth>변경하기</Button>
+      </div>
     </div>
   );
 }

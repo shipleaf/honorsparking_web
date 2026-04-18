@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/app/components/ui/Button";
 
 export default function TicketPaymentInfo() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function TicketPaymentInfo() {
         <span className="text-[14px] font-[500] text-[#2a2a2a]">주차권 사용 차량</span>
         <div className="flex justify-between items-center">
           <span className="font-[700] text-[1.25rem] text-[#2a2a2a]">33나 3333</span>
-          <button className="text-[#093AEE] font-[500] text-[14px] bg-[white] p-2 px-4 rounded-[6px]" onClick={handleChangeCar}>변경하기</button>
+          <Button variant="text" size="sm" className="rounded-[6px] bg-white px-4 py-2" onClick={handleChangeCar}>변경하기</Button>
         </div>
       </div>
     </div>

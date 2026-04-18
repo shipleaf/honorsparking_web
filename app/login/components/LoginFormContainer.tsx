@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
+import Input from "@/app/components/ui/Input";
 
 export default function LoginFormContainer() {
   const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
@@ -80,19 +81,19 @@ export default function LoginFormContainer() {
         </div>
         {isSelected == "user" ? (
           <div className="userform w-full flex flex-col items-center gap-6">
-            <div className="flex flex-col w-[95%] gap-1">
-              <span className="text-[#7E7F83]">아이디</span>
-              <input
-                className="rounded-[12px] border border-1 p-4 focus:placeholder-transparent focus:outline-none focus:border-[#093AEE]"
+            <div className="w-[95%]">
+              <Input
+                variant="outlined"
+                label="아이디"
                 placeholder="아이디를 입력해주세요"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
               />
             </div>
-            <div className="flex flex-col w-[95%] gap-1">
-              <span className="text-[#7E7F83]">비밀번호</span>
-              <input
-                className="rounded-[12px] border border-1 p-4 focus:placeholder-transparent focus:outline-none focus:border-[#093AEE]"
+            <div className="w-[95%]">
+              <Input
+                variant="outlined"
+                label="비밀번호"
                 placeholder="비밀번호를 입력해주세요"
                 type="password"
                 value={password}
@@ -120,13 +121,13 @@ export default function LoginFormContainer() {
               <span className="text-[1rem] font-[500] text-[#7E7F83]">
                 고객님의 차량번호를 입력해주세요
               </span>
-              <input
-                className="rounded-[12px] border border-1 p-4 focus:placeholder-transparent focus:outline-none focus:border-[#093AEE]"
+              <Input
+                variant="outlined"
                 placeholder="예: 123가4567"
-                value={carNumber} // Controlled Component 유지
+                value={carNumber}
                 onChange={(e) => setCarNumber(e.target.value)}
+                error={error || undefined}
               />
-              {error && <p style={{ color: "red" }}>{error}</p>}
             </div>
             <div className="flex flex-col gap-1 py-6">
               <div className="flex items-center gap-1">

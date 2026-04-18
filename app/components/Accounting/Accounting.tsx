@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/app/components/ui/Button";
 
 export default function Accounting() {
   const router = useRouter();
@@ -33,12 +34,9 @@ export default function Accounting() {
               <span className="font-[700] text-lg">2,000원</span>
             </div>
           </div>
-          <button
-            className="w-full bg-[#093AEE] rounded-[999px] font-[400] text-white p-3"
-            onClick={navigatePayment}
-          >
+          <Button fullWidth size="md" onClick={navigatePayment}>
             결제하기
-          </button>
+          </Button>
         </div>
       </div>
     </div>
