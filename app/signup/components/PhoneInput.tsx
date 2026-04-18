@@ -4,6 +4,7 @@ import { CheckPhoneAuth, SendPhoneAuth } from "@/app/api/useSocialLoginAPI";
 import CautionModal from "@/app/components/modal/CautionModal";
 import { useSignupStageStore, useSignupStore } from "@/store/useSignupStore";
 import React, { useEffect, useState } from "react";
+import Input from "@/app/components/ui/Input";
 
 export default function PhoneInput() {
   const [, setHasValue] = useState(false);
@@ -101,31 +102,31 @@ export default function PhoneInput() {
     <div className="space-y-6 flex flex-col w-full items-center">
       <div className="bg-white w-full rounded-md p-4 flex flex-col justify-center">
         <label className="text-[#467EE7] text-[14px] font-400">Phone</label>
-        <input
+        <Input
+          variant="underline"
           type="tel"
           placeholder="전화번호를 입력해주세요"
-          value={rawPhone}
-          className={`p-2 focus:outline-none border-b ${
-            isValidPhone ? "border-b-[#467EE7]" : "border-b-red-500"
-          }`}
+          value={displayPhone}
+          error={displayPhone.length > 0 && !isValidPhone ? " " : undefined}
           onChange={handleInput}
+          onInput={() =>
+            setIsValidPhone(validatePhoneNumber(displayPhone.replace(/-/g, "")))
+          }
         />
         {isWaitingForAuth ? (
           <div className="w-full flex flex-col mt-4">
             <label className="text-[#467EE7] text-[14px] font-400">
               인증 번호
             </label>
-            <div className="flex items-center w-full justify-between">
-              <input
+            <div className="flex items-center w-full justify-between gap-2">
+              <Input
+                variant="underline"
                 type="text"
                 placeholder="인증 번호를 입력해주세요"
-                className={`p-2 w-[70%] focus:outline-none border-b ${
-                  isValidPhone ? "border-b-[#467EE7]" : "border-b-red-500"
-                }`}
                 value={authValue}
                 onChange={(e) => setAuthValue(e.target.value)}
               />
-              <span className="text-sm text-[#FF0000]">
+              <span className="text-sm text-[#FF0000] shrink-0">
                 {formatTime(timeLeft)}
               </span>
             </div>

@@ -6,6 +6,8 @@ import { useState } from "react";
 import { ParkingZone } from "./ReservationList";
 import PlaceHeader from "./PlaceHeader";
 import NaverMapComponent from "./NaverMapComponent";
+import Modal from "@/app/components/ui/Modal";
+import Button from "@/app/components/ui/Button";
 
 interface Props {
   data: ParkingZone;
@@ -128,35 +130,29 @@ export default function ReservationDetailComponents({ data }: Props) {
           <span className="text-xl font-[700]">{data?.size}개</span>
         </div>
       </div>
-      {isFeeModalOpen ? (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <div className="bg-white p-6 rounded-[16px] w-[90%] max-w-md">
-            <h2 className="text-[17px] font-[700] mb-4">주차요금</h2>
-            <div className="bg-[#F7F7F7] rounded-[10px] p-4 space-y-2">
-              {ruleText.map((line: string, index: number) => (
-                <p key={index} className="text-[#093AEE] font-[700] text-md">
-                  {line}
-                </p>
-              ))}
-            </div>
-            <div className="w-full mt-6">
-              <button
-                className="rounded-[999px] bg-[#093AEE] p-4 px-12 w-full text-white font-[500]"
-                onClick={() => setIsFeeModalOpen(false)}
-              >
-                확인
-              </button>
-            </div>
-          </div>
+      <Modal
+        isOpen={isFeeModalOpen}
+        onClose={() => setIsFeeModalOpen(false)}
+        title="주차요금"
+      >
+        <div className="bg-surface-grey rounded-[10px] p-4 space-y-2">
+          {ruleText.map((line: string, index: number) => (
+            <p key={index} className="text-action font-bold text-body">
+              {line}
+            </p>
+          ))}
         </div>
-      ) : (
-        ""
-      )}
+        <div className="w-full mt-6">
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={() => setIsFeeModalOpen(false)}
+          >
+            확인
+          </Button>
+        </div>
+      </Modal>
       {isDetailPageOpen && (
         <div
           className="fixed bg-[#fff] inset-0 z-[10000]"

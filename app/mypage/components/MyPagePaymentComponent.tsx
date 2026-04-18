@@ -2,37 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { fetchMyStatus } from "@/app/api/UserActivity";
-import { ParkingStatusResponse } from "@/app/components/UserStatus";
-import { useQuery } from "@tanstack/react-query";
-
-// const data = {
-//   parkingZone: {
-//     entranceTime: "2025-05-22T00:00:00",
-//     cost: 2200,
-//     zoneName: "Seoul Gangnam-gu Yeoksam-dong Parking Lot",
-//     hourlyRate: 1000,
-//   },
-// };
-
-const formatElapsedTime = (entranceTimeISO: string) => {
-  const entrance = new Date(entranceTimeISO);
-
-  // 현재 시간 (한국 시간 기준)
-  const now = new Date();
-  const nowKST = new Date(now.getTime() + 9 * 60 * 60 * 1000); // UTC + 9
-
-  const diffMs = nowKST.getTime() - entrance.getTime(); // 밀리초 차이
-  if (diffMs < 0) return "0시 0분";
-
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-  const hours = Math.floor(diffMinutes / 60);
-  const minutes = diffMinutes % 60;
-
-  const pad = (n: number) => n.toString().padStart(2, "0");
-
-  return `${pad(hours)}시간 ${pad(minutes)}분`;
-};
+import Button from "@/app/components/ui/Button";
 
 export default function MyPagePaymentComponent() {
   const router = useRouter();
@@ -89,6 +59,7 @@ export default function MyPagePaymentComponent() {
           {data.parkingZone?.cost?.toLocaleString() ?? 0}원 결제하기
         </button>
       </div>
-    );
-  }
+      <Button fullWidth size="md" className="mt-3" onClick={handlePayment}>{paymentData.price}원 결제하기</Button>
+    </div>
+  );
 }

@@ -14,7 +14,6 @@ export default function PaymentMethod() {
         <input type="radio" />
         <label className="font-[500]">등록된 카드 결제</label>
       </div>
-      {/* <span className='pl-6'>국민은행</span> */}
       <button className="flex items-start bg-[#F0F0F0] rounded-[0.5rem] text-[#64656A] py-3 px-4 justify-between">
         <span className="text-md font-[500]">카드 선택</span>
         <MdKeyboardArrowDown color="#4C4D4F" size={24} />

@@ -6,6 +6,7 @@ import { useSignupStageStore } from "@/store/useSignupStore";
 import { useSignupStore } from "@/store/useSignupStore";
 import { checkDuplication, SignUp } from "@/app/api/useSocialLoginAPI";
 import { useRouter } from "next/navigation";
+import Input from "@/app/components/ui/Input";
 
 export default function UserRegister() {
   const [accountId, setAccountId] = useState("");
@@ -89,12 +90,11 @@ export default function UserRegister() {
               중복확인
             </button>
           </div>
-          <input
+          <Input
             type="text"
             placeholder="아이디를 입력해주세요"
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
-            className="bg-[#F0F0F0] p-4 w-full rounded-[12px] focus:outline-none"
           />
           {isIdAvailable !== null && (
             <p
@@ -116,12 +116,11 @@ export default function UserRegister() {
             />
             <span className="text-md font-[700]">비밀번호</span>
           </div>
-          <input
+          <Input
             type="password"
             placeholder="비밀번호를 입력해주세요"
             value={accountPassword}
             onChange={(e) => setAccountPassword(e.target.value)}
-            className="w-full focus:outline-none flex p-4 bg-[#F0F0F0] rounded-[12px] overflow-hidden"
           />
         </div>
         <div className="bg-white p-4 rounded-[16px] space-y-2">
@@ -134,12 +133,11 @@ export default function UserRegister() {
             />
             <span className="text-md font-[700]">비밀번호 확인</span>
           </div>
-          <input
+          <Input
             type="password"
             placeholder="비밀번호를 재입력해주세요"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full focus:outline-none flex p-4 bg-[#F0F0F0] rounded-[12px] overflow-hidden"
           />
         </div>
       </div>
