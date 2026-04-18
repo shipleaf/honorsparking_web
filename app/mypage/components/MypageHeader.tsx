@@ -1,10 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import SidebarDrawer from "@/app/common/SidebarDrawer";
 import { useSidebar } from "@/app/hooks/useSidebar";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import { fetchMyName } from "@/app/api/MyPageAPI";
+import { useRouter } from "next/navigation";
+import { checkUnreadAlarm } from "@/app/api/AlarmAPI";
+import { useQuery } from "@tanstack/react-query";
 
 export default function MyPageHeader() {
   const { isOpen, open, close } = useSidebar();
@@ -56,6 +60,11 @@ export default function MyPageHeader() {
         </div>
         <SidebarDrawer isOpen={isOpen} onClose={close} />
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 z-[101] flex items-center justify-center bg-white/60">
+          <span className="loader !w-[48px] !bg-[#2221d0]"></span>
+        </div>
+      )}
     </div>
   );
 }

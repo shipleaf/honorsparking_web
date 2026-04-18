@@ -4,12 +4,14 @@ import React from "react";
 import Image from "next/image";
 import { useState } from "react";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 export default function SideBar() {
   // const [isTicketOpen, setIsTicketOpen] = useState(true);
   const [isParkingOpen, setIsParkingOpen] = useState(true);
   const [isCardOpen, setIsCardOpen] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(true);
+  const router = useRouter();
 
   // const handleOpenTicket = () => {
   //   setIsTicketOpen((prev) => !prev);
@@ -87,14 +89,21 @@ export default function SideBar() {
               isParkingOpen ? "translate-y-0 h-auto" : "-translate-y-4 h-0"
             }`}
           >
-            <button className="text-[#64656A] text-md">주차장 예약</button>
-            <button className="text-[#64656A] text-md">주차장 이용 조회</button>
-            <button className="text-[#64656A] text-md">
-              즐겨찾기한 주차장
+            <button
+              className="text-[#64656A] text-md"
+              onClick={() => router.push("/reservation")}
+            >
+              주차장 찾기
+            </button>
+            <button
+              className="text-[#64656A] text-md"
+              onClick={() => router.push("/history")}
+            >
+              주차장 이용 조회
             </button>
           </div>
         </div>
-        <div>
+        {/* <div>
           <button
             className="flex flex-row items-center justify-between w-full"
             onClick={handleOpenCard}
@@ -109,7 +118,7 @@ export default function SideBar() {
               <MdKeyboardArrowDown size={28} color="#ACAFB3" />
             )}
           </button>
-          <div
+          {/* <div
             className={`flex flex-col gap-6 items-start pt-6 pl-8 transform transition-all duration-300 overflow-hidden z-9 ${
               isCardOpen ? "translate-y-0 h-auto" : "-translate-y-4 h-0"
             }`}
@@ -118,8 +127,8 @@ export default function SideBar() {
             <button className="text-[#64656A] text-md">사전 결제</button>
             <button className="text-[#64656A] text-md">미납 상태</button>
             <button className="text-[#64656A] text-md">결제 내역</button>
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
         <div className="relative">
           <button
             className="flex flex-row items-center justify-between w-full py-2"
@@ -145,7 +154,45 @@ export default function SideBar() {
               isNotificationOpen ? "translate-y-0 h-auto" : "-translate-y-4 h-0"
             }`}
           >
-            <button className="text-[#64656A] text-md">알림 확인</button>
+            <button
+              className="text-[#64656A] text-md"
+              onClick={() => router.push("/notice?page=1")}
+            >
+              알림 확인
+            </button>
+          </div>
+        </div>
+        <div>
+          <button
+            className="flex flex-row items-center justify-between w-full"
+            onClick={handleOpenCard}
+          >
+            <div className="flex flex-row gap-2 font-[700] items-center justify-center">
+              <Image
+                src="/src/icon/OnMyPage.svg"
+                alt=""
+                width={20}
+                height={24}
+              />
+              <span>마이페이지</span>
+            </div>
+            {isCardOpen ? (
+              <MdKeyboardArrowUp size={28} color="#ACAFB3" />
+            ) : (
+              <MdKeyboardArrowDown size={28} color="#ACAFB3" />
+            )}
+          </button>
+          <div
+            className={`flex flex-col gap-6 items-start pt-6 pl-8 transform transition-all duration-300 overflow-hidden z-9 ${
+              isCardOpen ? "translate-y-0 h-auto" : "-translate-y-4 h-0"
+            }`}
+          >
+            <button
+              className="text-[#64656A] text-md"
+              onClick={() => router.push("/mypage/profile")}
+            >
+              내 프로필
+            </button>
           </div>
         </div>
       </div>

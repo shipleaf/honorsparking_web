@@ -1,60 +1,167 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import SocialLogin from "./SocialLogin";
 import Image from "next/image";
 import Input from "@/app/components/ui/Input";
 
 export default function LoginFormContainer() {
-  const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
   const router = useRouter();
 
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [carNumber, setCarNumber] = useState(""); // 상태 추가
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isSelected, setIsSelected] = useState("user");
 
   const carNumberRegex = /^[0-9]{2,3}[가-힣][0-9]{4}$/;
   const [error, setError] = useState("");
+  const reset = useSignupStageStore((state) => state.reset);
+  const [guestEntries, setGuestEntries] = useState<
+    NonMemberParkingEntry[] | null
+  >(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [cautionModal, setCautionModal] = useState(false);
+  const [apiLoading, setApiLoading] = useState(false);
 
-  const handleSubmit = () => {
-    if (carNumberRegex.test(carNumber)) {
-      setError(""); // 에러 초기화
-      router.push("/result");
+  // const guestEntries = {
+  //   parkingEntries: [
+  //     {
+  //       vehicleNumber: "130테1212",
+  //       parkingLotLocation:
+  //         "경기도 성남시 둔촌대로 545  한라시그마밸리 지하3층",
+  //       entryTime: "2025-05-20T03:12:03",
+  //       totalParkingMinutes: 868,
+  //       currentFee: 27000,
+  //       entryPhotoUrl:
+  //         "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/2023_Hyundai_Avante_N_1.jpg/330px-2023_Hyundai_Avante_N_1.jpg",
+  //     },
+  //   ],
+  // };
 
-      // 여기서 비회원 여부 API 요청, try, catch로 에러 발생시 alert로 이미 등록된 차량입니다를 띄우기
-    } else {
+  useEffect(() => {
+    // eslint-disable-next-line
+    const handler = async (event: any) => {
+      try {
+        const { sessionId } = event.detail;
+        if (!sessionId) return;
+
+        await loginWithSessionId(sessionId); // ✅ await로 로그인 보장
+        router.push("/home"); // ✅ 로그인 성공 후에만 이동
+      } catch (error) {
+        console.error("❌ sessionReceived 이벤트 처리 중 오류:", error);
+        alert("소셜 로그인에 실패했습니다.");
+      }
+    };
+
+    window.addEventListener("sessionReceived", handler);
+    return () => window.removeEventListener("sessionReceived", handler);
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    reset();
+    // eslint-disable-next-line
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!carNumberRegex.test(carNumber)) {
       setError("올바른 차량 번호를 입력하세요. (예: 123가4567)");
+      return;
+    }
+    setApiLoading(true);
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const result = await fetchNonMemberParking(carNumber);
+
+      if (result.parkingEntries.length === 0) {
+        setModalMessage("주차 중인 차량이 없습니다.");
+        setCautionModal(true);
+        setIsLoading(false);
+        setApiLoading(false);
+        return; // 즉시 함수 종료!
+      }
+
+      setGuestEntries(result.parkingEntries);
+
+      setTimeout(() => {
+        setShowModal(true);
+        setCarNumber("");
+        setIsLoading(false);
+        setApiLoading(false);
+      }, 500);
+    } catch {
+      setModalMessage("비회원 조회 중 오류가 발생했습니다.");
+      setCautionModal(true);
+      setIsLoading(false);
+      setApiLoading(false);
     }
   };
 
-  const handleLogin = async () => {
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showModal]);
+
+  const loginAndFetchNewCsrf = async () => {
     try {
-      const response = await axios.post(
+      // 1️⃣ 로그인 전 토큰
+      // const { token: preToken, headerName } = await getCsrf();
+
+      // 2️⃣ 로그인
+      // await apiClient.post(
+      await axios.post(
+        // await axios.post(
         `${apiUrl}/api/v1/auth/login`,
-        {
-          username: id,
-          password: password,
-        },
+        new URLSearchParams({ username: id, password }),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
+            // [headerName]: preToken,
           },
-          withCredentials: true, // 서버로 보내는 요청만 포함되는 옵션이라고 생각해서 제외했는데 받을때도 헤더에 포함된 쿠키를 저장하려면 해당 옵션을 사용해야 함.
+          withCredentials: true,
         }
       );
 
-      console.log(response.headers);
-      router.push("/");
+      // const { token: postToken, headerName: newHeaderName } = await getCsrf();
+
+      // useCsrfStore.getState().setCsrf(postToken, newHeaderName);
+
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.userAgent.includes("Honors-WebView")
+      ) {
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: "LOGIN_SUCCESS",
+            userId: id,
+          })
+        );
+        console.log("📡 LOGIN_SUCCESS 메시지 전송 완료");
+      }
+
+      setTimeout(() => {
+        router.push("/home");
+      }, 200);
     } catch (error) {
-      console.error("로그인 실패:", error);
+      console.error("로그인 흐름 실패:", error);
       alert("로그인에 실패했습니다.");
     }
   };
+
+  const isStillLoading = isLoading || apiLoading;
 
   return (
     <div className="bg-white rounded-t-[32px] w-full px-4 py-8 pb-10">
@@ -103,13 +210,24 @@ export default function LoginFormContainer() {
             <div className="flex flex-col gap-3 w-[95%] items-center">
               <button
                 className="font-[500] text-white bg-[#093AEE] rounded-[3rem] w-full p-5 text-[17px]"
-                onClick={handleLogin}
+                onClick={loginAndFetchNewCsrf}
               >
                 로그인
               </button>
               <button
                 className="border border-1 border-[#093AEE] font-[500] text-[#093AEE] p-5 w-full text-[17px] rounded-[3rem]"
-                onClick={() => router.push("/signup")}
+                onClick={async () => {
+                  try {
+                    // const { token, headerName } = await getCsrf();
+                    // useCsrfStore.getState().setCsrf(token, headerName);
+                    router.push("/signup");
+                  } catch (err) {
+                    console.error("회원가입 전 CSRF 토큰 요청 실패:", err);
+                    alert(
+                      "회원가입 준비 중 문제가 발생했습니다. 다시 시도해주세요."
+                    );
+                  }
+                }}
               >
                 회원가입
               </button>
@@ -150,15 +268,40 @@ export default function LoginFormContainer() {
               </div>
             </div>
             <button
-              className="font-[500] text-white bg-[#093AEE] rounded-[3rem] w-full p-5 text-[17px]"
+              className="font-[500] text-white bg-[#093AEE] rounded-[3rem] w-full p-5 text-[17px] flex items-center justify-center relative"
               onClick={handleSubmit}
+              disabled={isStillLoading}
             >
-              비회원 로그인하기
+              <span
+                className={`${isStillLoading ? "opacity-0" : "opacity-100"}`}
+              >
+                비회원 로그인하기
+              </span>
+              {isStillLoading && (
+                <div className="absolute w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
             </button>
           </div>
         )}
       </div>
       {isSelected == "user" ? <SocialLogin /> : null}
+      {showModal && guestEntries && (
+        <div className="fixed inset-0 z-[100]">
+          <GuestContainer
+            GuestProps={{ entries: guestEntries }}
+            showModal={() => setShowModal(false)}
+          />
+        </div>
+      )}
+      {cautionModal && (
+        <CautionModal
+          title={modalMessage}
+          body=""
+          onClose={() => {
+            setCautionModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -32,7 +32,12 @@ export default function MainHeader() {
     setIsClient(true);
   }, []);
 
-  const { isLoading, isError } = useQuery({
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["sessionInfo"],
     queryFn: fetchSessionInfo,
     retry: false,
@@ -63,7 +68,7 @@ export default function MainHeader() {
           className="justify-self-end"
           onClick={() => router.push("/notice?page=1")}
         >
-          {unreadCount > 0 ? (
+          {isUnreadError && unreadAlarmData.hasUnread ? (
             <Image
               src="/src/icon/NewNotification.svg"
               alt=""

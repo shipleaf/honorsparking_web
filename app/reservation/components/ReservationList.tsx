@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReservationDetailComponents from "./ReservationDetailComponent";
-import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
+import ReservationDetailSkeleton from "./ReservationDetailSkeleton";
 
 export interface ParkingZone {
   isFavorite: boolean;
@@ -27,21 +27,44 @@ export interface ParkingZone {
   thumbnail: string;
 }
 
-export default function ReservationList() {
-  const [parkingZones, setParkingZones] = useState<ParkingZone[]>([]);
+interface Props {
+  parkingZones: ParkingZone[];
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+}
+
+export default function ReservationList({
+  parkingZones,
+  isLoading,
+  isFetching,
+  isError,
+}: Props) {
+  const shouldShowSkeleton = isLoading || isFetching;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetchParkingZoneList();
-        setParkingZones(res.parkingZones);
-      } catch (err) {
-        console.error("주차장 목록 불러오기 실패:", err);
-      }
-    };
+    if (!shouldShowSkeleton && parkingZones.length > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [shouldShowSkeleton, parkingZones]);
 
-    fetchData();
-  }, []);
+  if (shouldShowSkeleton) {
+    return (
+      <div className="flex flex-col gap-4 items-center">
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <ReservationDetailSkeleton key={idx} />
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 font-semibold">
+        주차장이 없습니다.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">

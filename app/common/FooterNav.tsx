@@ -1,8 +1,35 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
+export function useKeyboardVisible() {
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const detectKeyboard = () => {
+      const height = window.innerHeight;
+      const threshold = 150; // 키보드 올라왔을 때 줄어드는 예상 높이
+
+      const resizeHandler = () => {
+        const newHeight = window.innerHeight;
+        const diff = height - newHeight;
+        setIsKeyboardVisible(diff > threshold);
+      };
+
+      window.addEventListener("resize", resizeHandler);
+
+      return () => {
+        window.removeEventListener("resize", resizeHandler);
+      };
+    };
+
+    detectKeyboard();
+  }, []);
+
+  return isKeyboardVisible;
+}
 
 interface FooterNavProps {
   currentpage: "home" | "parking" | "ticket" | "mypage";
@@ -14,9 +41,12 @@ interface ButtonProps {
 
 export default function FooterNav({ currentpage }: FooterNavProps) {
   const router = useRouter();
+  const isKeyboardVisible = useKeyboardVisible();
+
+  if (isKeyboardVisible) return null;
 
   const handleNavigate = ({ page }: ButtonProps) => {
-    router.push(page === "home" ? `/` : `/${page}`);
+    router.push(page === "home" ? `/home` : `/${page}`);
   };
 
   return (

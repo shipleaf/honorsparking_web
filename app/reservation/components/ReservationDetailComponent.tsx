@@ -125,35 +125,10 @@ export default function ReservationDetailComponents({ data }: Props) {
         </button>
       </div>
       <div className="w-full grid grid-cols-2 gap-3">
-        <div className="bg-[#F7F7F7] rounded-[16px] p-3 flex flex-col gap-5">
-          <div className="flex flex-row items-center justify-start">
-            <Image src="/src/icon/Parking.svg" alt="" width={30} height={30} />
-            <span className="text-[#4C4D4F] font-[500]">주차공간</span>
-          </div>
-          <span className="text-xl font-[700] pl-3 pb-2">{data?.size}개</span>
+        <div className="rounded-[16px] p-3 flex items-center gap-5">
+          <Image src="/src/icon/Parking.svg" alt="" width={30} height={30} />
+          <span className="text-xl font-[700]">{data?.size}개</span>
         </div>
-        <div className="bg-[#F7F7F7] rounded-[16px] p-3 flex flex-col gap-5">
-          <div className="flex flex-row items-center justify-start">
-            <Image src="/src/icon/ElectCar.svg" alt="" width={30} height={30} />
-            <span className="text-[#4C4D4F] font-[500]">전기차</span>
-          </div>
-          <span className="text-xl font-[700] pl-3 pb-2">
-            {data?.electricCarSpaceCount}개
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-row gap-1 items-center justify-start pl-2 py-2">
-        <span className="text-[#2A2A2A] font-[700] text-lg">주차요금</span>
-        <Image
-          src="/src/icon/Information.svg"
-          alt=""
-          width={24}
-          height={24}
-          onClick={(e) => {
-            setIsFeeModalOpen(true);
-            e.stopPropagation();
-          }}
-        />
       </div>
       <Modal
         isOpen={isFeeModalOpen}

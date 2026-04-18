@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useSignupStageStore } from "@/store/useSignupStore";
 import { useSignupStore } from "@/store/useSignupStore";
-import { SignUp } from "@/app/api/useSocialLoginAPI";
+import { checkDuplication, SignUp } from "@/app/api/useSocialLoginAPI";
 import { useRouter } from "next/navigation";
 import Input from "@/app/components/ui/Input";
 
@@ -15,6 +15,8 @@ export default function UserRegister() {
   const { stage, prevStage } = useSignupStageStore();
   const { setSignupData } = useSignupStore();
   const router = useRouter();
+  const [checkMessage, setCheckMessage] = useState("");
+  const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
 
   const reset = useSignupStageStore((state) => state.reset);
 
@@ -42,6 +44,28 @@ export default function UserRegister() {
     }
   };
 
+  const handleCheckDuplication = async () => {
+    if (!accountId.trim()) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const result = await checkDuplication(accountId);
+      if (result === true) {
+        setIsIdAvailable(true);
+        setCheckMessage("이미 사용 중인 아이디입니다.");
+      } else {
+        setIsIdAvailable(false);
+        setCheckMessage("사용 가능한 아이디입니다.");
+      }
+    } catch (error) {
+      console.error("중복 확인 실패:", error);
+      setIsIdAvailable(false);
+      setCheckMessage("중복 확인 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <>
       <div className="px-6 space-y-4">
@@ -59,7 +83,10 @@ export default function UserRegister() {
               />
               <span className="text-md font-[700]">아이디</span>
             </div>
-            <button className="border border-[#093AEE] rounded-[6px] py-1 px-2 text-[#093AEE]">
+            <button
+              className="border border-[#093AEE] rounded-[6px] py-1 px-2 text-[#093AEE]"
+              onClick={handleCheckDuplication}
+            >
               중복확인
             </button>
           </div>
@@ -69,6 +96,15 @@ export default function UserRegister() {
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
           />
+          {isIdAvailable !== null && (
+            <p
+              className={`text-sm mt-1 px-2 ${
+                isIdAvailable ? "text-red-600" : "text-[#093AEE]"
+              }`}
+            >
+              {checkMessage}
+            </p>
+          )}
         </div>
         <div className="bg-white p-4 rounded-[16px] space-y-2">
           <div className="flex items-center gap-2">
