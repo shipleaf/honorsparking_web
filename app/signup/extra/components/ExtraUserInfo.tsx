@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchMyInfo } from "@/app/api/MyPageAPI";
+import { fetchMyInfo } from "@/apis/user/MyPageAPI";
 
 type UserInfo = {
   userName: string | null;

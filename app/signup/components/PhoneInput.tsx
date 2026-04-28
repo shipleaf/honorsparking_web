@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckPhoneAuth, SendPhoneAuth } from "@/app/api/useSocialLoginAPI";
+import { CheckPhoneAuth, SendPhoneAuth } from "@/apis/auth/auth.api";
 import CautionModal from "@/app/components/modal/CautionModal";
 import { useSignupStageStore, useSignupStore } from "@/store/useSignupStore";
 import React, { useEffect, useState } from "react";

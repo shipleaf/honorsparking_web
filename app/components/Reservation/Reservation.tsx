@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import ReservationHeader from "./ReservationHeader";
 import ReservationComponents from "./ReservationComponent";
 import { ParkingZone } from "@/app/reservation/components/ReservationList";
-import { fetchParkingZoneList } from "@/app/api/ParkingZoneAPI";
+import { fetchParkingZoneList } from "@/apis/parking/ParkingZoneAPI";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import SkeletonCard from "./SkeletonCard";
 import { useLocationStore } from "@/store/locationStore";

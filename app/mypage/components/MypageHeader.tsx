@@ -5,9 +5,9 @@ import Image from "next/image";
 import SidebarDrawer from "@/app/common/SidebarDrawer";
 import { useSidebar } from "@/app/hooks/useSidebar";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { fetchMyName } from "@/app/api/MyPageAPI";
+import { fetchMyName } from "@/apis/user/MyPageAPI";
 import { useRouter } from "next/navigation";
-import { checkUnreadAlarm } from "@/app/api/AlarmAPI";
+import { checkUnreadAlarm } from "@/apis/user/AlarmAPI";
 import { useQuery } from "@tanstack/react-query";
 
 export default function MyPageHeader() {

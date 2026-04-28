@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosArrowDown } from "react-icons/io";
 import Image from "next/image";
-import { NonMemberParkingEntry } from "@/app/api/GuestAPI";
+import { NonMemberParkingEntry } from "@/apis/guest/GuestAPI";
 
 interface GuestProps {
   GuestProps: {

@@ -6,7 +6,7 @@ import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import PageButton from "./PageButton";
-import { deleteSelectedAlarms, readSelectedAlarms } from "@/app/api/AlarmAPI";
+import { deleteSelectedAlarms, readSelectedAlarms } from "@/apis/user/AlarmAPI";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
 

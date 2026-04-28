@@ -1,7 +1,7 @@
 "use client";
 
-import { fetchMyInfo, updateMyInfo } from "@/app/api/MyPageAPI";
-import { checkPassword } from "@/app/api/UserActivity";
+import { fetchMyInfo, updateMyInfo } from "@/apis/user/MyPageAPI";
+import { checkPassword } from "@/apis/user/UserActivity";
 import axios from "axios";
 import React, { useState } from "react";
 import { UserInfo } from "../../components/MyProfile";

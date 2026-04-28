@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useSignupStageStore } from "@/store/useSignupStore";
 import { useSignupStore } from "@/store/useSignupStore";
-import { checkDuplication, SignUp } from "@/app/api/useSocialLoginAPI";
+import { checkDuplication, SignUp } from "@/apis/auth/auth.api";
 import { useRouter } from "next/navigation";
 import Input from "@/app/components/ui/Input";
 

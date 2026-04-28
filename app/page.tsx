@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchSessionInfo } from "./api/UserActivity";
+import { fetchSessionInfo } from "../apis/user/UserActivity";
 import { useEffect, useState } from "react";
 import LoginCaution from "./components/login/LoginCaution";
 import { useRouter } from "next/navigation";

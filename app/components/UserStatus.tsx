@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchMyStatus } from "../api/UserActivity";
+import { fetchMyStatus } from "../../apis/user/UserActivity";
 import InParking from "./Activity/InParking";
 import OutParking from "./Activity/OutParking";
 

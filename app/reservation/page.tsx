@@ -14,7 +14,7 @@ import {
   ParkingZoneResponse,
   searchLocalZone,
   searchParkingZone,
-} from "@/app/api/ParkingZoneAPI";
+} from "@/apis/parking/ParkingZoneAPI";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export default function Page() {

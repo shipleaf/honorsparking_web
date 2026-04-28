@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import { logout } from "@/app/api/useSocialLoginAPI";
+import { logout } from "@/apis/auth/auth.api";
 import DecisionModal from "@/app/components/modal/DecisionModal";
 
 const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;

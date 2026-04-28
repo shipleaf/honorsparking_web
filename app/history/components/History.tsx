@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchParkingZoneHistory } from "@/app/api/ParkingZoneAPI";
+import { fetchParkingZoneHistory } from "@/apis/parking/ParkingZoneAPI";
 import HistoryComponents from "@/app/components/History/HistoryComponents";
 import { ParkingHistory } from "@/app/components/History/History";
 

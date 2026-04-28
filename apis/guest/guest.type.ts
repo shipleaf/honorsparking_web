@@ -1,6 +1,4 @@
-import axios from "axios";
-
-export interface NonMemberParkingEntry {
+interface NonMemberParkingEntry {
   vehicleNumber: string; // 조회하려 한 비회원 차량번호
   parkingLotLocation: string; // 주차장 위치
   entryTime: string; // 입차 시간 (ISO 문자열)
@@ -12,12 +10,3 @@ export interface NonMemberParkingEntry {
 export interface GetNonMemberParkingResponse {
   parkingEntries: NonMemberParkingEntry[];
 }
-
-const apiUrl = process.env.NEXT_PUBLIC_SEVER_URL;
-
-export const fetchNonMemberParking = async (vehicleNumber: string) => {
-  const response = await axios.get(`${apiUrl}/api/v1/parking/nonmember`, {
-    params: { vehicleNumber },
-  });
-  return response.data;
-};

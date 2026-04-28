@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateMyInfo } from "@/app/api/MyPageAPI";
-import { updateUserRole } from "@/app/api/UserActivity";
-import { logout } from "@/app/api/useSocialLoginAPI";
+import { updateMyInfo } from "@/apis/user/MyPageAPI";
+import { updateUserRole } from "@/apis/user/UserActivity";
+import { logout } from "@/apis/auth/auth.api";
 
 export default function SocialSignupPage() {
   const router = useRouter();

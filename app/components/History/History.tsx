@@ -4,7 +4,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import HistoryHeader from "./HistoryHeader";
 import HistoryComponents from "./HistoryComponents";
-import { fetchParkingZoneHistory } from "@/app/api/ParkingZoneAPI";
+import { fetchParkingZoneHistory } from "@/apis/parking/ParkingZoneAPI";
 
 export interface ParkingHistory {
   id: number;

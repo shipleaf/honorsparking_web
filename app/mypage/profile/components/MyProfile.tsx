@@ -1,4 +1,4 @@
-import { fetchMyInfo } from "@/app/api/MyPageAPI";
+import { fetchMyInfo } from "@/apis/user/MyPageAPI";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
